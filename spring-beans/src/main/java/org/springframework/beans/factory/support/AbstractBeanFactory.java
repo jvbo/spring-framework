@@ -1652,9 +1652,15 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @param mbd the merged bean definition
 	 * @return the object to expose for the bean
 	 */
+	// TODO 从bean的实例中获取对象
 	protected Object getObjectForBeanInstance(
 			Object beanInstance, String name, String beanName, @Nullable RootBeanDefinition mbd) {
-
+		/**
+		 * 注意:无论是从缓存中获取到的bean还是通过不同的策略加载的bean都只是最原始的bean状态,
+		 * 并不一定是我们最终想要的bean;例如,我们需要对工厂bean进行处理,那么这里得到的其实是工厂bean的初始状态,
+		 * 但是我们真正需要的工厂bean中定义的factory-method方法中返回的bean,而getObjectForBeanInstance()方法
+		 * 就是完成这个工作的;
+		 */
 		// Don't let calling code try to dereference the factory if the bean isn't a factory.
 		if (BeanFactoryUtils.isFactoryDereference(name) && !(beanInstance instanceof FactoryBean)) {
 			throw new BeanIsNotAFactoryException(transformedBeanName(name), beanInstance.getClass());
