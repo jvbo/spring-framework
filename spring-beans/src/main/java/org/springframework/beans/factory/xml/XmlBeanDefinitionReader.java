@@ -390,7 +390,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @see #doLoadDocument
 	 * @see #registerBeanDefinitions
 	 */
-	//TODO 加载BeanDefinitions
+	// TODO 加载BeanDefinitions
 	protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
 			throws BeanDefinitionStoreException {
 		//1.获取对xml文件的验证模型;
@@ -451,12 +451,12 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	//TODO 获取验证模型
 	protected int getValidationModeForResource(Resource resource) {
 		int validationModeToUse = getValidationMode();
-		//手动指定了验证模式则使用指定的验证模式
+		// 手动指定了验证模式则使用指定的验证模式
 		if (validationModeToUse != VALIDATION_AUTO) {
 			return validationModeToUse;
 		}
-		//未指定则自动检测, 这里将自动检测验证模式的工作委派给了专门的处理类XmlValidationModeDetecotor,
-		//调用了XmlValidationModeDetector的validationModeDetector()方法
+		// 未指定则自动检测, 这里将自动检测验证模式的工作委派给了专门的处理类XmlValidationModeDetecotor,
+		// 调用了XmlValidationModeDetector的validationModeDetector()方法
 		int detectedMode = detectValidationMode(resource);
 		if (detectedMode != VALIDATION_AUTO) {
 			return detectedMode;
@@ -516,16 +516,16 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @see #setDocumentReaderClass
 	 * @see BeanDefinitionDocumentReader#registerBeanDefinitions
 	 */
-	//TODO 解析及注册BeanDefinition
+	// TODO 解析及注册BeanDefinition
 	public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
-		//使用DefaulBeanDefinitionDocumentReader实例化BeanDefinitionDocumentReader
+		// 使用DefaulBeanDefinitionDocumentReader实例化BeanDefinitionDocumentReader
 		BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
-		//在实例化BeanDefinitionReader的时候会将BeanDefinitionRegistry传入,默认使用继承DefaultListableBeanFactory的子类;
-		//记录统计前BeanDefinition的加载个数
+		// 在实例化BeanDefinitionReader的时候会将BeanDefinitionRegistry传入,默认使用继承DefaultListableBeanFactory的子类;
+		// 记录统计前BeanDefinition的加载个数
 		int countBefore = getRegistry().getBeanDefinitionCount();
-		//加载及注册Bean
+		// 加载及注册Bean
 		documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
-		//记录本次加载的BeanDefinition个数
+		// 记录本次加载的BeanDefinition个数
 		return getRegistry().getBeanDefinitionCount() - countBefore;
 	}
 

@@ -66,12 +66,12 @@ public class DefaultDocumentLoader implements DocumentLoader {
 	 * Load the {@link Document} at the supplied {@link InputSource} using the standard JAXP-configured
 	 * XML parser.
 	 */
-	//TODO 获取Document
+	// TODO 获取Document
 	@Override
 	public Document loadDocument(InputSource inputSource, EntityResolver entityResolver,
 			ErrorHandler errorHandler, int validationMode, boolean namespaceAware) throws Exception {
-		//EntityResolver:如果SAX应用程序需要实现自定义处理外部实体,则必须实现此接口并使用setEntityResolver()方法,
-		//向SAX驱动器注册一个实例,防止下载DTD的时候网络错误,提供一个寻找DTD声明的方法;
+		// EntityResolver:如果SAX应用程序需要实现自定义处理外部实体,则必须实现此接口并使用setEntityResolver()方法,
+		// 向SAX驱动器注册一个实例,防止下载DTD的时候网络错误,提供一个寻找DTD声明的方法;
 		DocumentBuilderFactory factory = createDocumentBuilderFactory(validationMode, namespaceAware);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Using JAXP provider [" + factory.getClass().getName() + "]");

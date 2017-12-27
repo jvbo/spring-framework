@@ -110,7 +110,7 @@ import org.springframework.util.StringValueResolver;
  * @see AbstractAutowireCapableBeanFactory#createBean
  * @see DefaultListableBeanFactory#getBeanDefinition
  */
-//TODO 综合FactoryBeanRegistrySupport和ConfigurableBean
+// TODO 综合FactoryBeanRegistrySupport和ConfigurableBean
 public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
 
 	/** Parent bean factory, for bean inheritance support */

@@ -118,7 +118,7 @@ import org.springframework.util.StringUtils;
  * @see DefaultListableBeanFactory
  * @see BeanDefinitionRegistry
  */
-//TODO 综合AbstractBeanFactory,并实现AutowireCapableBeanFactory接口
+// TODO 综合AbstractBeanFactory,并实现AutowireCapableBeanFactory接口
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory
 		implements AutowireCapableBeanFactory {
 
@@ -169,7 +169,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 */
 	public AbstractAutowireCapableBeanFactory() {
 		super();
-		//ignoreDependencyInterface主要是忽略给定接口的自动装配功能,
+		// ignoreDependencyInterface主要是忽略给定接口的自动装配功能,
 		ignoreDependencyInterface(BeanNameAware.class);
 		ignoreDependencyInterface(BeanFactoryAware.class);
 		ignoreDependencyInterface(BeanClassLoaderAware.class);

@@ -165,6 +165,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		}
 	}
 
+	//TODO 缓存中获取单例bean
 	@Override
 	@Nullable
 	public Object getSingleton(String beanName) {
@@ -180,16 +181,35 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @param allowEarlyReference whether early references should be created or not
 	 * @return the registered singleton object, or {@code null} if none found
 	 */
+	// TODO 缓存中获取单例bean
 	@Nullable
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+		/**
+		 * 1. singletonObjects:用于保存beanName和创建bean实例之间的关系,beanName->beanInstance
+		 * 2. singletonFactories:用于保存beanName和创建bean的工厂之间的关系,beanName->ObjectFactory
+		 * 3. earlySingletonFactories:也是保存beanName和创建bean实例之间的关系,与singletonObjects不同之处在于,
+		 * 当一个单例bean被放到里面后,当bean还在创建过程中,就可以通过getBean()方法获取到了,其目的是用来检测循环应用;
+		 * 4. registeredSingletons:用来保存当前所有已注册的bean;
+		 * 5. 总结:首先尝试从singletonObjects中获取实例,如果获取不到,则从earlySingletonObjects里面获取,
+		 *    如果还获取不到,则尝试从singletonFactories里面获取beanName对应的ObjectFactory,然后调用这个ObjectFactory的
+		 *    getObject()方法来创建bean,并放到earlySingletonFactories中,然后从singletonFactories中remove调这个ObjectFactory;
+		 */
+
+		// 检查缓存中是否存在实例
 		Object singletonObject = this.singletonObjects.get(beanName);
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+			// 为空,则锁定全局变量并进行处理
 			synchronized (this.singletonObjects) {
+				// 如果此bean正在加载则不处理
 				singletonObject = this.earlySingletonObjects.get(beanName);
 				if (singletonObject == null && allowEarlyReference) {
+					// 当某些方法需要提前初始化时会调用addSingletionFactory()方法
+					// 将对应的ObjectFactory初始化策略存储在singletonFactories
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 					if (singletonFactory != null) {
+						// 调用预先设定的getObject()方法
 						singletonObject = singletonFactory.getObject();
+						// 记录在缓存中,earlySingletonObjects和singletonFactories互斥
 						this.earlySingletonObjects.put(beanName, singletonObject);
 						this.singletonFactories.remove(beanName);
 					}
