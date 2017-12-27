@@ -41,7 +41,7 @@ import org.springframework.lang.Nullable;
  * @author Juergen Hoeller
  * @since 2.5.1
  */
-//TODO 在DefaultSingletonBeanRegistry基础上增加了对FactoryBean的特殊处理
+// TODO 在DefaultSingletonBeanRegistry基础上增加了对FactoryBean的特殊处理
 public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanRegistry {
 
 	/** Cache of singleton objects created by FactoryBeans: FactoryBean name --> object */

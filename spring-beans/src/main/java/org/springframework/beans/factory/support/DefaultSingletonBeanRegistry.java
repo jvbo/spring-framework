@@ -71,7 +71,7 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.beans.factory.DisposableBean
  * @see org.springframework.beans.factory.config.ConfigurableBeanFactory
  */
-//TODO 实现SingletonBeanRegistry接口
+// TODO 实现SingletonBeanRegistry接口
 public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
 
 	/** Logger available to subclasses */

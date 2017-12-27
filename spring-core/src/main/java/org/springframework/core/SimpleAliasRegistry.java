@@ -35,7 +35,7 @@ import org.springframework.util.StringValueResolver;
  * @author Juergen Hoeller
  * @since 2.5.2
  */
-//TODO 主要使用Map作为alias的缓存,实现AliasRegistry接口
+// TODO 主要使用Map作为alias的缓存,实现AliasRegistry接口
 public class SimpleAliasRegistry implements AliasRegistry {
 
 	/** Map from alias to canonical name */

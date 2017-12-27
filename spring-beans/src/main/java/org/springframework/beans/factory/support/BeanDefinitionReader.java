@@ -37,7 +37,7 @@ import org.springframework.lang.Nullable;
  * @since 1.1
  * @see org.springframework.core.io.Resource
  */
-//TODO 主要定义资源读取并转换为BeanDefinition的各个功能
+// TODO 主要定义资源读取并转换为BeanDefinition的各个功能
 public interface BeanDefinitionReader {
 
 	/**

@@ -118,7 +118,7 @@ import org.springframework.util.StringUtils;
  * @see DefaultListableBeanFactory
  * @see BeanDefinitionRegistry
  */
-//TODO 综合AbstractBeanFactory,并实现AutowireCapableBeanFactory接口
+// TODO 综合AbstractBeanFactory,并实现AutowireCapableBeanFactory接口
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory
 		implements AutowireCapableBeanFactory {
 

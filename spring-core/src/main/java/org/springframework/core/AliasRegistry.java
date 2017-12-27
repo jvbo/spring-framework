@@ -23,7 +23,7 @@ package org.springframework.core;
  * @author Juergen Hoeller
  * @since 2.5.2
  */
-//TODO 定义对alias的简单增删改等操作接口
+// TODO 定义对alias的简单增删改等操作接口
 public interface AliasRegistry {
 
 	/**

@@ -171,7 +171,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * "import", "alias", "bean".
 	 * @param root the DOM root element of the document
 	 */
-	//TODO 解析BeanDefinition
+	// TODO 解析BeanDefinition
 	protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) {
 		//对bean的处理
 		if (delegate.isDefaultNamespace(root)) {
