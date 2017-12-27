@@ -40,6 +40,7 @@ import org.springframework.lang.Nullable;
  * @see ConfigurableBeanFactory#addBeanPostProcessor
  * @see BeanFactoryPostProcessor
  */
+// TODO
 public interface BeanPostProcessor {
 
 	/**
@@ -81,6 +82,8 @@ public interface BeanPostProcessor {
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet
 	 * @see org.springframework.beans.factory.FactoryBean
 	 */
+	//TODO spring获取bean规则有规定,尽可能保证所有bean初始化后,
+	// 都会调用BeanPostProcessor接口的postProcessAfterInitialization()方法进行处理
 	@Nullable
 	default Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		return bean;

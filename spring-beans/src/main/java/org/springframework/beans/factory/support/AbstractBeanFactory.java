@@ -1656,12 +1656,19 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	protected Object getObjectForBeanInstance(
 			Object beanInstance, String name, String beanName, @Nullable RootBeanDefinition mbd) {
 		/**
-		 * 注意:无论是从缓存中获取到的bean还是通过不同的策略加载的bean都只是最原始的bean状态,
+		 * 1. 注意:无论是从缓存中获取到的bean还是通过不同的策略加载的bean都只是最原始的bean状态,
 		 * 并不一定是我们最终想要的bean;例如,我们需要对工厂bean进行处理,那么这里得到的其实是工厂bean的初始状态,
 		 * 但是我们真正需要的工厂bean中定义的factory-method方法中返回的bean,而getObjectForBeanInstance()方法
 		 * 就是完成这个工作的;
+		 *
+		 * 2. 总结: a. 对FactoryBean正确性的验证;
+		 *         b. 对非FactoryBean不做任何处理;
+		 *         c. 对bean进行转换;
+		 *         d. 将从Factory中解析bean的工作委托给getObjectFromFactoryBean();
+		 *
 		 */
 		// Don't let calling code try to dereference the factory if the bean isn't a factory.
+		// 如果指定的name是工厂相关(以&开头)且beanInstance不是FactoryBean类型,则验证不通过
 		if (BeanFactoryUtils.isFactoryDereference(name) && !(beanInstance instanceof FactoryBean)) {
 			throw new BeanIsNotAFactoryException(transformedBeanName(name), beanInstance.getClass());
 		}
@@ -1669,21 +1676,31 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// Now we have the bean instance, which may be a normal bean or a FactoryBean.
 		// If it's a FactoryBean, we use it to create a bean instance, unless the
 		// caller actually wants a reference to the factory.
+		// 现在我们有了bean的实例,这个实例可能会是正常的bean或者FactoryBea;
+		// 如果是FctoryBean,我们使用它创建实例;如果用户想要直接获取工厂实例而不是工程对应的getObject()方法对应的实例,
+		// 那么传入的name应该以&开头
 		if (!(beanInstance instanceof FactoryBean) || BeanFactoryUtils.isFactoryDereference(name)) {
 			return beanInstance;
 		}
 
+		// 加载FactoryBean
 		Object object = null;
 		if (mbd == null) {
+			// 尝试从缓存中加载bean
 			object = getCachedObjectForFactoryBean(beanName);
 		}
 		if (object == null) {
 			// Return bean instance from factory.
+			// 明确指定beanInstance一定是FactoryBean类型
 			FactoryBean<?> factory = (FactoryBean<?>) beanInstance;
 			// Caches object obtained from FactoryBean if it is a singleton.
+			// containsBeanDefinition()方法,检测beanDefinitionMap中及已经加载的所有bean中检测是否定义beanName
 			if (mbd == null && containsBeanDefinition(beanName)) {
+				// 将存储在xml配置文件中的GenericBeanDefinition转换为RootBeanDefinition,
+				// 如果指定beanName是子bean的话,同时会合并父类的相关属性
 				mbd = getMergedLocalBeanDefinition(beanName);
 			}
+			// 是否用户定义,而不是应用程序本身定义
 			boolean synthetic = (mbd != null && mbd.isSynthetic());
 			object = getObjectFromFactoryBean(factory, beanName, !synthetic);
 		}
