@@ -199,13 +199,16 @@ class ConstructorResolver {
 					try {
 						// 通过注解方式注解获取
 						String[] paramNames = ConstructorPropertiesChecker.evaluate(candidate, paramTypes.length);
-						// 使用spring中
+						// 使用spring中提供的工具类ParameterNameDiscover来获取;
+						// 构造函数,参数名称,参数类型,参数值都确定后就可以锁定构造函数以及对应的参数类型;
 						if (paramNames == null) {
 							ParameterNameDiscoverer pnd = this.beanFactory.getParameterNameDiscoverer();
 							if (pnd != null) {
 								paramNames = pnd.getParameterNames(candidate);
 							}
 						}
+						// 根据确定的构造函数转换对应的参数类型
+						// 主要是使用spring中提供的类型转换器或者用户自定义的类型转换器进行转换;
 						argsHolder = createArgumentArray(beanName, mbd, resolvedValues, bw, paramTypes, paramNames,
 								getUserDeclaredConstructor(candidate), autowiring);
 					}
@@ -230,9 +233,11 @@ class ConstructorResolver {
 					argsHolder = new ArgumentsHolder(explicitArgs);
 				}
 
+				// 探测是否有不确定的构造函数存在,如不同构造函数的关系是父子关系;
 				int typeDiffWeight = (mbd.isLenientConstructorResolution() ?
 						argsHolder.getTypeDifferenceWeight(paramTypes) : argsHolder.getAssignabilityWeight(paramTypes));
 				// Choose this constructor if it represents the closest match.
+				// 如果它代表当前最接近的匹配规则,则选择作为构造函数;
 				if (typeDiffWeight < minTypeDiffWeight) {
 					constructorToUse = candidate;
 					argsHolderToUse = argsHolder;
@@ -277,6 +282,7 @@ class ConstructorResolver {
 			final InstantiationStrategy strategy = beanFactory.getInstantiationStrategy();
 			Object beanInstance;
 
+			// 根据实例化策略以及得到的构造函数及构造函数参数实例化bean
 			if (System.getSecurityManager() != null) {
 				final Constructor<?> ctorToUse = constructorToUse;
 				final Object[] argumentsToUse = argsToUse;
