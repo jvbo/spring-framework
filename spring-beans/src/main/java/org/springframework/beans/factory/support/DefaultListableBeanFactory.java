@@ -784,15 +784,28 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	// Implementation of BeanDefinitionRegistry interface
 	//---------------------------------------------------------------------
 
+	// TODO 通过beanName注册BeanDefinition
 	@Override
 	public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
 			throws BeanDefinitionStoreException {
+		/**
+		 * 1. 对AbstractBeanDefinition的校验,和解析xml文件时的校验不同,解析xml文件的校验针对于xml格式,
+		 * 此时的校验是对于AbstractBeanDefinition的methodOverrides属性的校验;
+		 * 2. 对beanName已经注册的情况的处理,如果设置了不允许bean覆盖,则需要抛出异常,否则直接覆盖;
+		 * 3. 加入map缓存;
+		 * 4. 清楚解析之前留下的对应beanName的缓存;
+		 */
 
 		Assert.hasText(beanName, "Bean name must not be empty");
 		Assert.notNull(beanDefinition, "BeanDefinition must not be null");
 
 		if (beanDefinition instanceof AbstractBeanDefinition) {
 			try {
+				/**
+				 * 注册前的最后一次校验,这里的校验不同与之前的xml文件校验,
+				 * 主要是对于AbstractBeanDefinition属性中的methodOverrides校验,
+				 * 校验methodOverrides是否与工厂方法并存或者methodOverrides对应的方法不存在;
+				 */
 				((AbstractBeanDefinition) beanDefinition).validate();
 			}
 			catch (BeanDefinitionValidationException ex) {
@@ -802,9 +815,10 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		}
 
 		BeanDefinition oldBeanDefinition;
-
+		// beanDefinitionMap是ConcurrentHashMap,并发
 		oldBeanDefinition = this.beanDefinitionMap.get(beanName);
 		if (oldBeanDefinition != null) {
+			// 如果对应的beanName已经被注册且在配置中配置了bean不允许被覆盖,则抛出异常;
 			if (!isAllowBeanDefinitionOverriding()) {
 				throw new BeanDefinitionStoreException(beanDefinition.getResourceDescription(), beanName,
 						"Cannot register bean definition [" + beanDefinition + "] for bean '" + beanName +
@@ -832,6 +846,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							"] with [" + beanDefinition + "]");
 				}
 			}
+			// 注册beanDefinition
 			this.beanDefinitionMap.put(beanName, beanDefinition);
 		}
 		else {
@@ -860,6 +875,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		}
 
 		if (oldBeanDefinition != null || containsSingleton(beanName)) {
+			// 清楚之前解析留下的beanName缓存
 			resetBeanDefinition(beanName);
 		}
 	}
