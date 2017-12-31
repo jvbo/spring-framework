@@ -576,7 +576,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 				// Initialize event multicaster for this context.
 				/**
-				 * 8. 初始化应用消息广播器,并放入applicationEventMulticaster中;
+				 * 8. 初始化时间广播,ApplicationEventMulticaster,使用观察者模式,对注册ApplicationEvent事件进行捕捉;
 				 */
 				// 初始化应用消息广播器,并放入applicationEventMulticaster中
 				initApplicationEventMulticaster();
@@ -617,12 +617,15 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				}
 
 				// Destroy already created singletons to avoid dangling resources.
-				destroyBeans();//发生异常,销毁已经创建的bean,避免挂起资源(避免占用)
+				// 发生异常,销毁已经创建的bean,避免挂起资源(避免占用)
+				destroyBeans();
 
 				// Reset 'active' flag.
-				cancelRefresh(ex);//发生异常,取消refresh()方法
+				// 将context的状态转换为无效,标示初始化失败
+				cancelRefresh(ex);
 
 				// Propagate exception to caller.
+				// 将异常传播调用者;
 				throw ex;
 			}
 
