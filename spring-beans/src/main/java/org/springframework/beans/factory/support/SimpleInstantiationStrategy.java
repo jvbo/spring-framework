@@ -67,6 +67,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 		 * 为了方便,直接反射即可;
 		 */
 		if (!bd.hasMethodOverrides()) {
+			// 指定构造器或者生成的对象工厂方法来对Bean进行实例化
 			Constructor<?> constructorToUse;
 			synchronized (bd.constructorArgumentLock) {
 				constructorToUse = (Constructor<?>) bd.resolvedConstructorOrFactoryMethod;
@@ -90,10 +91,12 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 					}
 				}
 			}
+			// 通过BeanUtils进行实例化,这个BeanUtils的实例化通过Constructor来完成
 			return BeanUtils.instantiateClass(constructorToUse);
 		}
 		else {
 			// Must generate CGLIB subclass.
+			// 使用CGLIB来实例化对象
 			return instantiateWithMethodInjection(bd, beanName, owner);
 		}
 	}
