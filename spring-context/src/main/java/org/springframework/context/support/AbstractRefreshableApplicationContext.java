@@ -123,6 +123,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	// TODO 刷新BeanFactory
 	@Override
 	protected final void refreshBeanFactory() throws BeansException {
+		// 如果建立了BeanFactory,则关闭销毁BeanFactory
 		if (hasBeanFactory()) {
 			destroyBeans();
 			closeBeanFactory();
@@ -131,7 +132,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 			/**
 			 * 1. 创建DefaultListableBeanFactory;
 			 */
-			// 常见DefaultListableBeanFactory
+			// 创建并设置DefaultListableBeanFactory同时调用loadBeanDefinition载入loadBeanDefiniton
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			/**
 			 * 2. 指定序列化id;

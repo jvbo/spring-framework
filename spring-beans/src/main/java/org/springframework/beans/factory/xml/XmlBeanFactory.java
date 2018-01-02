@@ -50,6 +50,12 @@ import org.springframework.core.io.Resource;
  * @deprecated as of Spring 3.1 in favor of {@link DefaultListableBeanFactory} and
  * {@link XmlBeanDefinitionReader}
  */
+
+/**
+ * XmlBeanFactory是BeanFactory最简单的实现类;
+ * XmlBeanFactory的功能建立在DefaultListableBeanFactory这个容器的基础上,并在这个容器的基础上实现了其他如xml读取的功能,
+ * DefaultListableBeanFactory是很重要的一个ioc实现;
+ */
 @Deprecated
 @SuppressWarnings({"serial", "all"})
 public class XmlBeanFactory extends DefaultListableBeanFactory {
@@ -63,6 +69,11 @@ public class XmlBeanFactory extends DefaultListableBeanFactory {
 	 * @param resource XML resource to load bean definitions from
 	 * @throws BeansException in case of loading or parsing errors
 	 */
+	/**
+	 * 根据给定来源,创建一个XmlBeanFactory
+	 * @param resource
+	 * @throws BeansException
+	 */
 	public XmlBeanFactory(Resource resource) throws BeansException {
 		this(resource, null);
 	}
@@ -73,6 +84,12 @@ public class XmlBeanFactory extends DefaultListableBeanFactory {
 	 * @param resource XML resource to load bean definitions from
 	 * @param parentBeanFactory parent bean factory
 	 * @throws BeansException in case of loading or parsing errors
+	 */
+	/**
+	 * 根据给定来源和BeanFactory创建一个XmlBeanFactory
+	 * @param resource
+	 * @param parentBeanFactory
+	 * @throws BeansException
 	 */
 	public XmlBeanFactory(Resource resource, BeanFactory parentBeanFactory) throws BeansException {
 		super(parentBeanFactory);

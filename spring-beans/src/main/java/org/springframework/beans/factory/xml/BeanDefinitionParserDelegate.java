@@ -401,6 +401,7 @@ public class BeanDefinitionParserDelegate {
 	 * if there were errors during parse. Errors are reported to the
 	 * {@link org.springframework.beans.factory.parsing.ProblemReporter}.
 	 */
+	// TODO 调用入口
 	@Nullable
 	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele) {
 		return parseBeanDefinitionElement(ele, null);
@@ -411,10 +412,11 @@ public class BeanDefinitionParserDelegate {
 	 * if there were errors during parse. Errors are reported to the
 	 * {@link org.springframework.beans.factory.parsing.ProblemReporter}.
 	 */
+	// TODO 解析BeanDefinition元素
 	@Nullable
 	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, @Nullable BeanDefinition containingBean) {
 		/**
-		 * 1. 提取元素id以及name属性;
+		 * 1. 提取元素id,name,alias属性;
 		 */
 		// 解析id属性
 		String id = ele.getAttribute(ID_ATTRIBUTE);
@@ -444,6 +446,7 @@ public class BeanDefinitionParserDelegate {
 		/**
 		 * 2. 进一步解析其他所有属性并统一封装至GenericBeanDefinition类型的实例中;
 		 */
+		// bean元素的详细解析
 		AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean);
 		if (beanDefinition != null) {
 			if (!StringUtils.hasText(beanName)) {
@@ -520,6 +523,7 @@ public class BeanDefinitionParserDelegate {
 
 		this.parseState.push(new BeanEntry(beanName));
 
+		// 这里只读取bean中定义的class名字,然后载入到BeanDefinition中
 		String className = null;
 		if (ele.hasAttribute(CLASS_ATTRIBUTE)) {
 			className = ele.getAttribute(CLASS_ATTRIBUTE).trim();
@@ -531,14 +535,27 @@ public class BeanDefinitionParserDelegate {
 		}
 
 		try {
+			// 这里生成需要的BeanDefinition对象,为bean定义信息的载入做准备
 			// 创建用于承载属性的AbstractBeanDefinition类型的GenericBeanDefinition
 			AbstractBeanDefinition bd = createBeanDefinition(className, parent);
 
+			// 这里对bean元素进行属性解析
 			// 硬编码解析默认bean的各种属性
 			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);
 			// 提取description
 			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
 
+			// 下面解析各种bean元素
+			/**
+			 * 1. 解析<bean>元素的属性
+			 * 2. 解析<description>子元素
+			 * 3. 解析<meta>子元素
+			 * 4. 解析<lookup-method/>子元素
+			 * 5. 解析<replaced-method>子元素
+			 * 6. 解析<constructor-arg>子元素
+			 * 7. 解析<property>子元素
+			 * 8. 解析<qualifier>子元素。解析过程中像<meta>、<qualifier>等子元素都很少使用
+			 */
 			// 解析元数据
 			parseMetaElements(ele, bd);
 			// 解析lookup-override属性
@@ -757,6 +774,7 @@ public class BeanDefinitionParserDelegate {
 	 */
 	// TODO 解析子元素property
 	public void parsePropertyElements(Element beanEle, BeanDefinition bd) {
+		// 遍历bean所有子元素
 		NodeList nl = beanEle.getChildNodes();
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
@@ -926,7 +944,7 @@ public class BeanDefinitionParserDelegate {
 		}
 		this.parseState.push(new PropertyEntry(propertyName));
 		try {
-			// 不允许多次对同一属性配置
+			// 不允许多次对同一属性配置,若果同一个bean中已经有相同名称的property存在,只有第一个起作用;
 			if (bd.getPropertyValues().contains(propertyName)) {
 				error("Multiple 'property' definitions for property '" + propertyName + "'", ele);
 				return;

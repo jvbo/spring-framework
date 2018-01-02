@@ -151,9 +151,11 @@ public class BeanDefinitionReaderUtils {
 		// Register bean definition under primary name.
 		// 使用beanName做唯一标识注册
 		String beanName = definitionHolder.getBeanName();
+		// 向ioc容器注册BeanDefinition
 		registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());
 
 		// Register aliases for bean name, if any.
+		// 如果解析的BeanDefinition有别名,向容器为其注册别名
 		// 注册所有的别名
 		String[] aliases = definitionHolder.getAliases();
 		if (aliases != null) {

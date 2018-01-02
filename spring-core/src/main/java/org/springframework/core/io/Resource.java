@@ -49,6 +49,12 @@ import org.springframework.lang.Nullable;
  * @see ByteArrayResource
  * @see InputStreamResource
  */
+/**
+ * 抽象了所有spring内部使用到的底层资源:File,URL,ClassPath等;
+ * 同时,对于不同来源的资源文件,Resource也有不同的实现,文件(FileSystemResource),
+ * Classpath资源(ClassPathResource),URL资源(UrlResource),InputStream资源(InputStreamResource),
+ * Byte数组(ByteArratResource)等;
+ */
 //TODO spring对内部使用到的资源实现了自己的抽象结构,封装底层资源
 public interface Resource extends InputStreamSource {
 
@@ -104,6 +110,7 @@ public interface Resource extends InputStreamSource {
 	 * @throws IOException if the resource cannot be resolved as URL,
 	 * i.e. if the resource is not available as descriptor
 	 */
+	// TODO 得到URL类型资源,用于资源转换
 	URL getURL() throws IOException;
 
 	/**
@@ -112,6 +119,7 @@ public interface Resource extends InputStreamSource {
 	 * i.e. if the resource is not available as descriptor
 	 * @since 2.5
 	 */
+	// TODO 得到URI资源,用于资源转换
 	URI getURI() throws IOException;
 
 	/**
@@ -121,6 +129,7 @@ public interface Resource extends InputStreamSource {
 	 * @throws IOException in case of general resolution/reading failures
 	 * @see #getInputStream()
 	 */
+	// TODO 得到File类型资源,用于资源转换;
 	File getFile() throws IOException;
 
 	/**
@@ -143,6 +152,7 @@ public interface Resource extends InputStreamSource {
 	 * @throws IOException if the resource cannot be resolved
 	 * (in the file system or as some other known physical resource type)
 	 */
+	// TODO 获取资源长度
 	long contentLength() throws IOException;
 
 	/**
@@ -150,6 +160,7 @@ public interface Resource extends InputStreamSource {
 	 * @throws IOException if the resource cannot be resolved
 	 * (in the file system or as some other known physical resource type)
 	 */
+	// TODO 获取lastModified属性
 	long lastModified() throws IOException;
 
 	/**
@@ -167,6 +178,7 @@ public interface Resource extends InputStreamSource {
 	 * <p>Returns {@code null} if this type of resource does not
 	 * have a filename.
 	 */
+	// TODO 获取文件名称
 	@Nullable
 	String getFilename();
 
@@ -177,7 +189,7 @@ public interface Resource extends InputStreamSource {
 	 * from their {@code toString} method.
 	 * @see Object#toString()
 	 */
-	//TODO 用于错误处理中的打印信息
+	//TODO 获取错误处理信息,主要用于错误处理中的打印信息
 	String getDescription();
 
 }

@@ -150,8 +150,9 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			}
 		}
 
-		//解析前处理,子类实现
+		//解析bean定义之前,增强解析过程的可扩展性,解析前处理,子类实现
 		preProcessXml(root);
+		// 从Document的根元素开始进行bean定义的Document对象;
 		parseBeanDefinitions(root, this.delegate);
 		//解析后处理,子类实现
 		postProcessXml(root);
@@ -174,7 +175,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 */
 	// TODO 解析BeanDefinition
 	protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) {
-		//对bean的处理
+		// 对bean的处理
 		if (delegate.isDefaultNamespace(root)) {
 			NodeList nl = root.getChildNodes();
 			for (int i = 0; i < nl.getLength(); i++) {
@@ -342,13 +343,15 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * Process the given bean element, parsing the bean definition
 	 * and registering it with the registry.
 	 */
-	// bean标签解析与注册
+	// bean标签解析与注册,由BeanDefinitionParserDelegate解析,将结果存放到BeanDefinitonHolder中
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
 		/**
 		 * 1. 委托BeanDefinition类的parseBeanDefinitionElement()方法进行元素解析,
 		 * 返回BeanDefinition类型的实例bdHolder,经这个方法后,bdHolder实例已经包含我们配置文件中配置的各属性了,
 		 * 如class,name,id,alias之类的属性;
 		 */
+		// BeanDefinitionHolder是BeanDefinition的封装,封装了BeanDefinition,bean的名字,别名等;
+		// 用BeanDefinitionHolder来向ioc容器注册
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 		if (bdHolder != null) {
 			/**
@@ -361,6 +364,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 				 * 3. 解析完成之后,需要对解析后的bdHolder进行注册,同样,注册操作委托给了BeanDefinitionReaderUtils的
 				 * registerBeanDefinition()方法
 				 */
+				// 向ioc容器注册bean
 				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
 			}
 			catch (BeanDefinitionStoreException ex) {

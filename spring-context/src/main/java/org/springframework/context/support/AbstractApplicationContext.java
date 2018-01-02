@@ -467,6 +467,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * its environment is an instance of {@link ConfigurableEnvironment}.
 	 * @see ConfigurableEnvironment#merge(ConfigurableEnvironment)
 	 */
+	// TODO 其实就是把ApplicationContext作为父容器;
 	@Override
 	public void setParent(@Nullable ApplicationContext parent) {
 		this.parent = parent;
@@ -511,7 +512,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		return this.applicationListeners;
 	}
 
-	//TODO 刷新上下文(context)
+	// TODO 刷新上下文(context),容器的初始化
+	// Resource定位,BeanDefinition载入,BeanDefinition注册,这个过程一般不包括依赖注入,
+	// 在ioc设计中,bean的载入和依赖注入是两个独立的过程,依赖注入一般发生在第一次getBean()向容器索要bean的时候,
+	// 单例bean默认配置了lazyinit属性为true,实例化会在ioc容器初始化的时候提前完成;
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {//refresh()和destroy()同步监听,保证只有一个线程在操作
@@ -522,7 +526,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			 * 那么ClassPathXmlApplicationContext为我们提供的这个准备函数就显得非常必要,它可以在Spring启动的时候
 			 * 提前对必须的变量进行存在性校验;
 			 */
-			// 准备刷新上下文
+			// 准备刷新容器,获取容器的当前时间,同时给容器设置同步标识
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
@@ -532,7 +536,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			 * 其他功能;之后ClassPathXmlApplicationContext实际上就已经包含了BeanFactory所提供的功能,也就是可以进行Bean的提取等
 			 * 基础操作;
 			 */
-			// 初始化BeanFactory,并进行xml文件读取
+			// 初始化BeanFactory,并进行xml文件读取,启动子类的refreshBeanFactory方法
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
@@ -540,7 +544,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			 * 3. 对BeanFactory进行各种功能的补充;
 			 * 这一步中增加支持@Qualifier与@Autowired这样的注解;
 			 */
-			// 对BeanFactory进行各种功能填充
+			// 对BeanFactory配置容器特性,例如类加载器,时间处理器
 			prepareBeanFactory(beanFactory);
 
 			try {
@@ -550,63 +554,63 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				 * spring之所以如此强大,除了功能上提供便利之后,还有其完美的架构设计,开放式的架构让使用它的程序员
 				 * 很容易根据业务需要扩展已存在的功能;
 				 */
-				// 子类覆盖方法做额外的处理
+				// 设置BeanFactory的后处理器
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
 				/**
 				 * 5. 激活各种BeanFactory处理器;
 				 */
-				// 激活各种BeanFactory处理器
+				// 调用BeanFactory的后处理器,这些后处理器是在Bean定义中向容器注册的
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
 				/**
 				 * 6. 注册拦截bean创建的bean处理器,这里只是注册,真正调用是在getBean时
 				 */
-				// 注册拦截Bean创建的Bean处理器,这里只是注册,真正调用是在getBean时
+				// 注册bean的后处理器,在bean创建过程中调用
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
 				/**
 				 * 7. 为上下文初始化Message源,即不同语言的消息体,国际化处理;
 				 */
-				// 为上下文初始化Message源,即不同语言的消息体,国际化处理
+				// 初始化上下文中的消息源
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
 				/**
 				 * 8. 初始化时间广播,ApplicationEventMulticaster,使用观察者模式,对注册ApplicationEvent事件进行捕捉;
 				 */
-				// 初始化应用消息广播器,并放入applicationEventMulticaster中
+				// 初始化上下文中的事件机制
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
 				/**
 				 * 9. 留给子类来初始化其他的bean;
 				 */
-				// 留给子类来初始化其他的bean
+				// 初始化其他特殊的bean
 				onRefresh();
 
 				// Check for listener beans and register them.
 				/**
 				 * 10. 在所有注册bean中查找Listeners bean,注册到消息广播器中;
 				 */
-				// 在所有注册bean中查找Listeners bean,注册到消息广播器中
+				// 检查并向容器注册监听器bean
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
 				/**
 				 * 11. 初始化剩下的单实例(非懒加载的)
 				 */
-				// 初始化剩下的单实例(非懒加载的)
+				// 实例化所有剩余的(non-lazy-init)单例bean
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
 				/**
 				 * 12. 完成刷新过程,通知声明周期处理器lifecycleProcessor刷新过程,同时发出ContextRefresh通知别人;
 				 */
-				// 完成刷新过程,通知生命周期处理器lifecycleProcessor刷新过程,同时发出ContextRefreshEvent通知别人
+				// 发布容器事件,结束refresh过程;
 				finishRefresh();
 			}
 
@@ -617,11 +621,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				}
 
 				// Destroy already created singletons to avoid dangling resources.
-				// 发生异常,销毁已经创建的bean,避免挂起资源(避免占用)
+				// 发生异常,销毁已经创建的bean,以避免资源占用
 				destroyBeans();
 
 				// Reset 'active' flag.
-				// 将context的状态转换为无效,标示初始化失败
+				// 取消regresh操作,重置'active'标识
 				cancelRefresh(ex);
 
 				// Propagate exception to caller.
@@ -632,6 +636,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			finally {
 				// Reset common introspection caches in Spring's core, since we
 				// might not ever need metadata for singleton beans anymore...
+				// 重置spring的核心缓存
 				resetCommonCaches();//由于可能不再使用一些单例bean,这里在spring-core中重置内省缓存
 			}
 		}

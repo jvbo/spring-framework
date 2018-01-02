@@ -299,6 +299,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @return the number of bean definitions found
 	 * @throws BeanDefinitionStoreException in case of loading or parsing errors
 	 */
+	// TODO 调用入口
 	@Override
 	public int loadBeanDefinitions(Resource resource) throws BeanDefinitionStoreException {
 		return loadBeanDefinitions(new EncodedResource(resource));
@@ -311,7 +312,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @return the number of bean definitions found
 	 * @throws BeanDefinitionStoreException in case of loading or parsing errors
 	 */
-	//TODO 加载BeanDefinition
+	//TODO 加载xml形式的BeanDefinition的地方
 	public int loadBeanDefinitions(EncodedResource encodedResource) throws BeanDefinitionStoreException {
 		Assert.notNull(encodedResource, "EncodedResource must not be null");
 		if (logger.isInfoEnabled()) {
@@ -337,7 +338,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 				if (encodedResource.getEncoding() != null) {
 					inputSource.setEncoding(encodedResource.getEncoding());
 				}
-				//进入核心逻辑
+				//进入核心逻辑,具体的读入过程
 				return doLoadBeanDefinitions(inputSource, encodedResource.getResource());
 			}
 			finally {
@@ -390,14 +391,16 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @see #doLoadDocument
 	 * @see #registerBeanDefinitions
 	 */
-	// TODO 加载BeanDefinitions
+	// TODO 加载BeanDefinitions,核心逻辑,具体过程
 	protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
 			throws BeanDefinitionStoreException {
 		//1.获取对xml文件的验证模型;
 		//2.加载xml文件,并得到对应的Document;
 		//3.根据返回的Document注册Bean信息
 		try {
+			// 取的xml文件的Document,解析过程室友DocumentLoader完成,默认是DefaultDocumentLoader
 			Document doc = doLoadDocument(inputSource, resource);
+			// 启动对BeanDefinition的详细解析过程,这个解析会使用到spring的bean配置规则
 			return registerBeanDefinitions(doc, resource);
 		}
 		catch (BeanDefinitionStoreException ex) {
@@ -518,12 +521,12 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 */
 	// TODO 解析及注册BeanDefinition
 	public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
-		// 使用DefaulBeanDefinitionDocumentReader实例化BeanDefinitionDocumentReader
+		// 得到BeanDefinitionDocumentReader对xml进行解析,使用DefaulBeanDefinitionDocumentReader实例化BeanDefinitionDocumentReader
 		BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
 		// 在实例化BeanDefinitionReader的时候会将BeanDefinitionRegistry传入,默认使用继承DefaultListableBeanFactory的子类;
 		// 记录统计前BeanDefinition的加载个数
 		int countBefore = getRegistry().getBeanDefinitionCount();
-		// 加载及注册Bean
+		// 加载及注册Bean,具体解析过程在这里完成
 		documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
 		// 记录本次加载的BeanDefinition个数
 		return getRegistry().getBeanDefinitionCount() - countBefore;

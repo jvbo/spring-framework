@@ -38,6 +38,10 @@ import java.io.InputStream;
  * @see InputStreamResource
  * @see ByteArrayResource
  */
+
+/**
+ * 封装任何能返回InputStream的类,如File,ClassPath下的资源和ByteArray等
+ */
 public interface InputStreamSource {
 
 	/**
@@ -50,6 +54,11 @@ public interface InputStreamSource {
 	 * @return the input stream for the underlying resource (must not be {@code null})
 	 * @throws java.io.FileNotFoundException if the underlying resource doesn't exist
 	 * @throws IOException if the content stream could not be opened
+	 */
+	/**
+	 * 返回InputStream的类,如File,ClassPath下的资源和ByteArray等
+	 * @return
+	 * @throws IOException
 	 */
 	InputStream getInputStream() throws IOException;
 

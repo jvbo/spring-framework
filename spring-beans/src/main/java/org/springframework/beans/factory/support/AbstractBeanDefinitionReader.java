@@ -180,19 +180,22 @@ public abstract class AbstractBeanDefinitionReader implements EnvironmentCapable
 	}
 
 
+	// TODO 加载BeanDefinition
 	@Override
 	public int loadBeanDefinitions(Resource... resources) throws BeanDefinitionStoreException {
 		Assert.notNull(resources, "Resource array must not be null");
 		int counter = 0;
+		// 遍历所有Resource集合loadBeanDefinition的信息
 		for (Resource resource : resources) {
 			counter += loadBeanDefinitions(resource);
 		}
 		return counter;
 	}
 
+	// TODO 加载BeanDefinition,调用入口
 	@Override
 	public int loadBeanDefinitions(String location) throws BeanDefinitionStoreException {
-		return loadBeanDefinitions(location, null);
+		return 	loadBeanDefinitions(location, null);
 	}
 
 	/**
