@@ -47,6 +47,16 @@ import org.springframework.lang.Nullable;
 @SuppressWarnings("serial")
 public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializable {
 
+	/**
+	 * 从提供的的配置实例config中获取advisor列表,遍历处理这些advisor,如果是IntroductionAdvisor,
+	 * 则判断此advisor能否应用到目标类targetClass上,如果是PointcutAdvisor,则判断此advisor能否应用到
+	 * 目标方法method上,将满足条件的advisor通过AdvisorAdaptor转化成Interceptor列表返回
+	 * @param config the AOP configuration in the form of an Advised object
+	 * @param method the proxied method
+	 * @param targetClass the target class (may be {@code null} to indicate a proxy without
+	 * target object, in which case the method's declaring class is the next best option)
+	 * @return
+	 */
 	@Override
 	public List<Object> getInterceptorsAndDynamicInterceptionAdvice(
 			Advised config, Method method, @Nullable Class<?> targetClass) {
@@ -55,7 +65,9 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 		// but we need to preserve order in the ultimate list.
 		List<Object> interceptorList = new ArrayList<>(config.getAdvisors().length);
 		Class<?> actualClass = (targetClass != null ? targetClass : method.getDeclaringClass());
+		// 查看是否包含IntroductionAdvisor,用于将advisor转换成MethodInterceptor
 		boolean hasIntroductions = hasMatchingIntroductions(config, actualClass);
+		// 这里实际上注册一系列AdvisorAdaptor,用于将advisor转化成MethodInterceptor
 		AdvisorAdapterRegistry registry = GlobalAdvisorAdapterRegistry.getInstance();
 
 		for (Advisor advisor : config.getAdvisors()) {
@@ -63,7 +75,10 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 				// Add it conditionally.
 				PointcutAdvisor pointcutAdvisor = (PointcutAdvisor) advisor;
 				if (config.isPreFiltered() || pointcutAdvisor.getPointcut().getClassFilter().matches(actualClass)) {
+					// 这两个方法位置可以互换
+					// 将advisor转化成Interceptor
 					MethodInterceptor[] interceptors = registry.getInterceptors(advisor);
+					// 检查当前advisor的pointcut是否可以匹配当前方法
 					MethodMatcher mm = pointcutAdvisor.getPointcut().getMethodMatcher();
 					if (MethodMatchers.matches(mm, method, actualClass, hasIntroductions)) {
 						if (mm.isRuntime()) {
