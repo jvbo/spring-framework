@@ -495,14 +495,24 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * <p>May be overridden in subclasses in order to initialize further strategy objects.
 	 */
 	protected void initStrategies(ApplicationContext context) {
+		// 初始化MultipartResolver,这个主要用来处理文件上传的
 		initMultipartResolver(context);
+		// 初始化LocaleResolver,这个主要用来配置国际化的
 		initLocaleResolver(context);
+		// 初始化ThemeResolver,用于控制不同的页面风格
 		initThemeResolver(context);
+		// 初始化HandlerMapping,客户端发出request时候,DispatcherServlet会将request提交给handlerMappers,
+		// 然后handlerMappers根据ApplicationContext配置传递回不同的Controller
 		initHandlerMappings(context);
+		// 初始化适配器
 		initHandlerAdapters(context);
+		// 异常处理
 		initHandlerExceptionResolvers(context);
+		// 当处理器没有返回View对象获取视图名称,并且没有往request里面写数据的时候,spring就会采用约定好的方式提供一个逻辑视图名称
 		initRequestToViewNameTranslator(context);
+		// 初始化视图解析器
 		initViewResolvers(context);
+		// spring提供了一个请求存储属性,可以提供给其他请求使用
 		initFlashMapManager(context);
 	}
 
@@ -957,10 +967,12 @@ public class DispatcherServlet extends FrameworkServlet {
 			Exception dispatchException = null;
 
 			try {
+				// 如果是MultipartContext类型的request,则转换为MultipartHttpServletRequest类型的request
 				processedRequest = checkMultipart(request);
 				multipartRequestParsed = (processedRequest != request);
 
 				// Determine handler for the current request.
+				// 根据request信息,寻找具体的处理handler
 				mappedHandler = getHandler(processedRequest);
 				if (mappedHandler == null) {
 					noHandlerFound(processedRequest, response);
@@ -968,9 +980,11 @@ public class DispatcherServlet extends FrameworkServlet {
 				}
 
 				// Determine handler adapter for the current request.
+				// 根据当前handler查找对应的handlerAdapter
 				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
 				// Process last-modified header, if supported by the handler.
+				// 处理带last-modified的header
 				String method = request.getMethod();
 				boolean isGet = "GET".equals(method);
 				if (isGet || "HEAD".equals(method)) {
@@ -988,13 +1002,16 @@ public class DispatcherServlet extends FrameworkServlet {
 				}
 
 				// Actually invoke the handler.
+				// 真正激活handler,并返回视图
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
 				if (asyncManager.isConcurrentHandlingStarted()) {
 					return;
 				}
 
+				// 处理默认的视图名称,就是替视图加上前后缀
 				applyDefaultViewName(processedRequest, mv);
+				// interceptor的调用
 				mappedHandler.applyPostHandle(processedRequest, response, mv);
 			}
 			catch (Exception ex) {
@@ -1005,6 +1022,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				// making them available for @ExceptionHandler methods and other scenarios.
 				dispatchException = new NestedServletException("Handler dispatch failed", err);
 			}
+			// 处理返回结果
 			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
 		}
 		catch (Exception ex) {

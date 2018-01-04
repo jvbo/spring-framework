@@ -368,12 +368,17 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 	public <T> T execute(StatementCallback<T> action) throws DataAccessException {
 		Assert.notNull(action, "Callback object must not be null");
 
+		// 创建数据库连接
 		Connection con = DataSourceUtils.getConnection(obtainDataSource());
 		Statement stmt = null;
 		try {
 			stmt = con.createStatement();
+			// 应用用户输入的参数
 			applyStatementSettings(stmt);
+			// 回调QueryStatementCallback的doInStatement方法,然后doStatement方法里面又回调PersonRowMapper的rowMap方法,
+			// rowMap取得每一行的信息封装成Person对象返回,一直返回,直到放回到这里result;
 			T result = action.doInStatement(stmt);
+			// 警告处理
 			handleWarnings(stmt);
 			return result;
 		}
@@ -381,6 +386,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 			// Release Connection early, to avoid potential connection pool deadlock
 			// in the case when the exception translator hasn't been initialized yet.
 			String sql = getSql(action);
+			// 发生异常时释放资源
 			JdbcUtils.closeStatement(stmt);
 			stmt = null;
 			DataSourceUtils.releaseConnection(con, getDataSource());
@@ -388,7 +394,9 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 			throw translateException("StatementCallback", sql, ex);
 		}
 		finally {
+			// 释放statement
 			JdbcUtils.closeStatement(stmt);
+			// 释放connection
 			DataSourceUtils.releaseConnection(con, getDataSource());
 		}
 	}
@@ -431,6 +439,7 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 				ResultSet rs = null;
 				try {
 					rs = stmt.executeQuery(sql);
+					// 先进入RowMapperResultSetExtractor的回调函数,然后再回调PersonRowMapper的mapRow方法
 					return rse.extractData(rs);
 				}
 				finally {
