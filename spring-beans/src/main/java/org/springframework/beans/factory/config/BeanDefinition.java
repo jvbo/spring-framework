@@ -37,6 +37,7 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.beans.factory.support.RootBeanDefinition
  * @see org.springframework.beans.factory.support.ChildBeanDefinition
  */
+// TODO 该接口用来管理基本spring的应用中的各种对象以及它们之间的相互依赖关系;
 public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 
 	/**

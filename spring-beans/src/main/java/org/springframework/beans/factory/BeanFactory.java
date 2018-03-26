@@ -115,7 +115,7 @@ import org.springframework.lang.Nullable;
  */
 
 /**
- * 主要为依赖注入(DI)提供支持,BeanFactory和相关的接口,如BeanFactoryAware,DisposablBean,
+ * 主要为依赖注入(DI)提供支持, #BeanFactory 和相关的接口,如 #BeanFactoryAware , #DisposableBean ,
  * InitializingBean,仍旧保留在spring中,主要目的是向后兼容已经存在的和那些spring整合在一起的第三方框架;
  * 在spring中有大量对BeanFactory的实现,其中最长被使用的是XmlBeanFactory类;这个容器从一个xml文件中读取配置,
  * 由这些元数据来生成一个被配置化的系统或者应用,在资源宝贵的移动设备或者基于applet的应用程序中,BeanFactory会优先使用,
@@ -123,6 +123,15 @@ import org.springframework.lang.Nullable;
  *
  * 这里定义的只是一系列接口的方法,通过这一系列的BeanFactory接口,可以使用不同的Bean的检索方法很方便的从ioc容器中得到需要的bean,
  * 从而忽略具体的ioc容器的实现,从这个角度上看,这些检索方法代表的是最基本的容器入口;
+ *
+ * 该接口定义了spring-beans的基本功能:
+ * 1. 获取bean;
+ * 2. 判断bean是否存在;
+ * 3. 是否为单例;
+ * 4. 是否为原型;
+ * 5. 类型是否匹配;
+ * 6. 获取bean类型;
+ * 7. 获取bean别名;
  */
 // TODO 定义获取bean及bean的各种属性
 public interface BeanFactory {
