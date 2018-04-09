@@ -51,6 +51,7 @@ import static org.springframework.core.ReactiveTypeDescriptor.singleRequiredValu
  * @author Sebastien Deleuze
  * @since 5.0
  */
+//TODO 这里报错的原因是:java.util.concurrent.Flow$Publisher是java9才有的
 public class ReactiveAdapterRegistry {
 
 	@Nullable
