@@ -39,6 +39,7 @@ package org.springframework.asm;
  * 
  * @author Eric Bruneton
  */
+// TODO 定义在读取字节码时会触发的事件
 public abstract class ClassVisitor {
 
     /**

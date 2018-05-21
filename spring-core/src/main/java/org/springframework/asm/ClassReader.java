@@ -41,6 +41,8 @@ import java.io.InputStream;
  * @author Eric Bruneton
  * @author Eugene Kuleshov
  */
+// TODO 字节码读取与分析引擎,采用类似SAX的时间读取机制,每当有事件发生时,
+// TODO 调用注册的ClassVisitor,AnnotationVisitor,FieldVisitor,MethodVisitor做相应的处理;
 public class ClassReader {
 
     /**
