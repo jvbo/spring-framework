@@ -37,6 +37,7 @@ package org.springframework.asm;
  * @author Eric Bruneton
  * @author Eugene Kuleshov
  */
+// TODO 定义在解析注解时会触发的事件,如解析到一个基本值类型的注解,enum值类型的注解,Array值类型的注解,注解值类型的注解等;
 public abstract class AnnotationVisitor {
 
     /**

@@ -1171,6 +1171,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// 解析class
 		Class<?> beanClass = resolveBeanClass(mbd, beanName);
 
+		// 检测类访问权限;默认情况下,对于非public的类,是允许访问的;若禁止访问,这抛出异常;
 		if (beanClass != null && !Modifier.isPublic(beanClass.getModifiers()) && !mbd.isNonPublicAccessAllowed()) {
 			throw new BeanCreationException(mbd.getResourceDescription(), beanName,
 					"Bean class isn't public, and non-public access not allowed: " + beanClass.getName());
@@ -1198,6 +1199,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		 * spring在根据参数及类型去判断最终会使用哪个构造函数进行实例化;但是,判断的过程是个比较消耗性能的步骤,
 		 * 所以采用缓存机制,如果已经解析过则不需要重复解析而是直接从RootBeanDefinition中的属性resolvedConstructorOrFactoryMethod
 		 * 缓存的值去取,否则需要再次解析,并将解析的结果添加至RootBeanDefinition中的属性resolvedConstructorFactoryMethod中;
+		 *
 		 */
 		// 使用容器自动装配方法进行实例化
 		boolean resolved = false;
@@ -1228,6 +1230,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Need to determine the constructor...
 		// 使用构造函数进行实例化
 		// 需要根据参数解析构造函数
+		// 由后置处理器决定返回哪些构造方法;
 		Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);
 		if (ctors != null ||
 				mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_CONSTRUCTOR ||

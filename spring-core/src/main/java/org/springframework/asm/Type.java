@@ -39,6 +39,7 @@ import java.lang.reflect.Method;
  * @author Eric Bruneton
  * @author Chris Nokleberg
  */
+// TODO 类型相关的常量定义以及一些基于其上的操作
 public class Type {
 
     /**

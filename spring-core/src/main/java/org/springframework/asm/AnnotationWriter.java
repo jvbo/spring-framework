@@ -35,6 +35,7 @@ package org.springframework.asm;
  * @author Eric Bruneton
  * @author Eugene Kuleshov
  */
+// TODO 实现了 #AnnotationVisitor接口,用于拼接注解相关字节码
 final class AnnotationWriter extends AnnotationVisitor {
 
     /**

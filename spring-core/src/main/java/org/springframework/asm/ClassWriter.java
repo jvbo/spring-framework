@@ -38,6 +38,7 @@ package org.springframework.asm;
  * 
  * @author Eric Bruneton
  */
+// TODO 它实现了 #ClassVisitor 接口,用于拼接字节码
 public class ClassWriter extends ClassVisitor {
 
     /**

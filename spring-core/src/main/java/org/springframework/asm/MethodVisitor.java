@@ -53,6 +53,7 @@ package org.springframework.asm;
  * 
  * @author Eric Bruneton
  */
+// TODO 定义在解析方法时触发的事件,如方法上的注解,属性,代码等
 public abstract class MethodVisitor {
 
     /**

@@ -41,6 +41,7 @@ package org.springframework.asm;
  * @author Eric Bruneton
  * @author Eugene Kuleshov
  */
+// TODO 字节码指令的一些常量定义
 public interface Opcodes {
 
     // ASM API versions

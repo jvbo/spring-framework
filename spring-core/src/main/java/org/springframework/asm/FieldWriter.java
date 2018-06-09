@@ -34,6 +34,7 @@ package org.springframework.asm;
  * 
  * @author Eric Bruneton
  */
+// TODO 实现了 #FieldVisitor 用于拼接字段相关字节码
 final class FieldWriter extends FieldVisitor {
 
     /**

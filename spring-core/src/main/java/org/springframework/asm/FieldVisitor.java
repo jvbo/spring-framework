@@ -36,6 +36,7 @@ package org.springframework.asm;
  * 
  * @author Eric Bruneton
  */
+// TODO 定义在解析字段时触发的事件,如解析到字段上的注解,解析到字段相关的属性等;
 public abstract class FieldVisitor {
 
     /**

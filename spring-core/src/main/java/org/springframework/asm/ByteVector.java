@@ -35,6 +35,7 @@ package org.springframework.asm;
  * 
  * @author Eric Bruneton
  */
+// TODO 字节码二进制存储的容器
 public class ByteVector {
 
     /**

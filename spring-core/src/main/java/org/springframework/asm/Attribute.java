@@ -35,6 +35,7 @@ package org.springframework.asm;
  * @author Eric Bruneton
  * @author Eugene Kuleshov
  */
+// TODO 字节码中属性的类抽象
 public class Attribute {
 
     /**
