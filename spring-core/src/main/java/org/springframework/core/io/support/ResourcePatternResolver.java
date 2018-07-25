@@ -51,6 +51,7 @@ import org.springframework.core.io.ResourceLoader;
  * @see org.springframework.context.ApplicationContext
  * @see org.springframework.context.ResourceLoaderAware
  */
+// TODO 解析位置模式到Resource对象的策略接口;
 public interface ResourcePatternResolver extends ResourceLoader {
 
 	/**

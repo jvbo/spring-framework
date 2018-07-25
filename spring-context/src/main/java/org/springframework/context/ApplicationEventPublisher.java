@@ -28,6 +28,7 @@ package org.springframework.context;
  * @see org.springframework.context.ApplicationEvent
  * @see org.springframework.context.event.EventPublicationInterceptor
  */
+// TODO 封装了事件发布功能,作为ApplicationContext的父接口使用;
 @FunctionalInterface
 public interface ApplicationEventPublisher {
 

@@ -25,6 +25,7 @@ import java.util.EventObject;
  * @author Rod Johnson
  * @author Juergen Hoeller
  */
+// TODO 可以由所有的application事件扩展,但不能作为直接发布通用事件的类;
 public abstract class ApplicationEvent extends EventObject {
 
 	/** use serialVersionUID from Spring 1.2 for interoperability */

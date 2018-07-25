@@ -46,6 +46,7 @@ package org.springframework.context;
  * @see org.springframework.jms.listener.AbstractMessageListenerContainer
  * @see org.springframework.scheduling.quartz.SchedulerFactoryBean
  */
+// TODO 定义了start/stop方法里对生命周期进行管理;典型应用是控制异步处理;
 public interface Lifecycle {
 
 	/**

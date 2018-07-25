@@ -33,6 +33,7 @@ import java.util.EventListener;
  * @param <E> the specific ApplicationEvent subclass to listen to
  * @see org.springframework.context.event.ApplicationEventMulticaster
  */
+// TODO 事件监听
 @FunctionalInterface
 public interface ApplicationListener<E extends ApplicationEvent> extends EventListener {
 

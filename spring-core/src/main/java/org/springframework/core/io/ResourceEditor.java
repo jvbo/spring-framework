@@ -47,6 +47,7 @@ import org.springframework.util.StringUtils;
  * @see DefaultResourceLoader
  * @see PropertyResolver#resolvePlaceholders
  */
+// TODO 资源编辑, ResourceEditor#setText
 public class ResourceEditor extends PropertyEditorSupport {
 
 	private final ResourceLoader resourceLoader;

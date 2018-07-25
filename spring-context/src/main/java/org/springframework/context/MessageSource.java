@@ -34,9 +34,10 @@ import org.springframework.lang.Nullable;
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
- * @see org.springframework.context.support.ResourceBundleMessageSource
- * @see org.springframework.context.support.ReloadableResourceBundleMessageSource
+ * @see org.springframework.context.support.ResourceBundleMessageSource  // 基于标准的java.util.ResourceBundle消息解析方式
+ * @see org.springframework.context.support.ReloadableResourceBundleMessageSource  // 具有无需重启VM即可重载消息定义的能力
  */
+// TODO 解析消息的策略接口,支持消息的参数化和国际化
 public interface MessageSource {
 
 	/**

@@ -46,6 +46,7 @@ import org.springframework.util.ErrorHandler;
  * @author Stephane Nicoll
  * @see #setTaskExecutor
  */
+// TODO 发布事件的默认实现
 public class SimpleApplicationEventMulticaster extends AbstractApplicationEventMulticaster {
 
 	@Nullable

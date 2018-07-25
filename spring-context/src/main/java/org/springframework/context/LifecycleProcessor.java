@@ -23,6 +23,7 @@ package org.springframework.context;
  * @author Juergen Hoeller
  * @since 3.0
  */
+// TODO 处理ApplicationContext中bean的生命周期的策略接口; DefaultLifecycleProcessor
 public interface LifecycleProcessor extends Lifecycle {
 
 	/**

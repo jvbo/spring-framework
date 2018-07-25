@@ -51,9 +51,12 @@ import org.springframework.lang.Nullable;
  */
 /**
  * 抽象了所有spring内部使用到的底层资源:File,URL,ClassPath等;
- * 同时,对于不同来源的资源文件,Resource也有不同的实现,文件(FileSystemResource),
- * Classpath资源(ClassPathResource),URL资源(UrlResource),InputStream资源(InputStreamResource),
- * Byte数组(ByteArratResource)等;
+ * 同时,对于不同来源的资源文件,Resource也有不同的实现:
+ * 	1. 文件(FileSystemResource);
+ * 	2. Classpath资源(ClassPathResource);
+ * 	3. URL资源(UrlResource);
+ * 	4. InputStream资源(InputStreamResource);
+ * 	5. Byte数组(ByteArratResource)等;
  */
 //TODO spring对内部使用到的资源实现了自己的抽象结构,封装底层资源
 public interface Resource extends InputStreamSource {
