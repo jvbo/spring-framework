@@ -58,7 +58,11 @@ import org.springframework.lang.Nullable;
  * 	4. InputStream资源(InputStreamResource);
  * 	5. Byte数组(ByteArratResource)等;
  */
-//TODO spring对内部使用到的资源实现了自己的抽象结构,封装底层资源
+
+/**
+ * TODO Spring用来封装I/O操作的类
+ * spring对内部使用到的资源实现了自己的抽象结构,封装底层资源
+ */
 public interface Resource extends InputStreamSource {
 
 	/**

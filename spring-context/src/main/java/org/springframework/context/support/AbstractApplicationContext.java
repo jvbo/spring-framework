@@ -512,12 +512,29 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		return this.applicationListeners;
 	}
 
-	// TODO 刷新上下文(context),容器的初始化
-	// Resource定位,BeanDefinition载入,BeanDefinition注册,这个过程一般不包括依赖注入,
-	// 在ioc设计中,bean的载入和依赖注入是两个独立的过程,依赖注入一般发生在第一次getBean()向容器索要bean的时候,
-	// 单例bean默认配置了lazyinit属性为true,实例化会在ioc容器初始化的时候提前完成;
+	/**
+	 * TODO 刷新上下文(context),容器的初始化;
+	 * 过程包括包括BeanDefinition的Resource定位,载入和注册三个基本过程;
+	 * 这个过程一般不包括依赖注入,在ioc设计中,bean的载入和依赖注入是两个独立的过程,依赖注入一般发生在第一次getBean()向容器索要bean的时候,
+	 * 单例bean默认配置了lazyinit属性为true,实例化会在ioc容器初始化的时候提前完成;
+	 * @throws BeansException
+	 * @throws IllegalStateException
+	 */
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
+		/**
+		 * 三个过程:
+		 * 1. Resource定位过程:是指BeanDefinition的资源定位,由ResourceLoader通过统一的Resource接口来完成,
+		 * 这个Resource对各种形式的BeanDefinition的使用都提供了统一接口;这些BeanDefinition的存在形式有多重,
+		 * 比如在文件系统中的Bean定义信息可以使用FileSystemResource来进行抽象;
+		 * 在类路径中的Bean定义信息可以使用ClassPathResource来使用;这个定位过程类似于容器寻找数据的过程,就像用水桶装水先要把水找到一样;
+		 * 2. BeanDefinition载入过程:是把用户定义好的Bean表示成ioc容器内部的数据结构,而这个容器内部的数据结构就是BeanDefinition;
+		 * 具体来说,这个BeanDefinition实际上就是POJO对象也就是Bean进行管理;
+		 * 3. IOC容器注册这些BeanDefinition的过程:通过调用BeanDefinitionRegistry接口实现来完成的;
+		 * 这个注册过程把载入过程中解析得到的BeanDefinition向ioc容器中进行注册;
+		 * 在ioc容器内部将BeanDefinition注入到一个HashMap中,ioc容器就是通过持有这个HashMap来持有这些BeanDefinition数据的;
+		 */
+
 		synchronized (this.startupShutdownMonitor) {//refresh()和destroy()同步监听,保证只有一个线程在操作
 			// Prepare this context for refreshing.
 			/**
@@ -575,7 +592,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				/**
 				 * 7. 为上下文初始化Message源,即不同语言的消息体,国际化处理;
 				 */
-				// 初始化上下文中的消息源
+				// 对上下文中的事件机制
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
@@ -596,14 +613,14 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				/**
 				 * 10. 在所有注册bean中查找Listeners bean,注册到消息广播器中;
 				 */
-				// 检查并向容器注册监听器bean
+				// 检查监听bean并且将这些bean向容器注册
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
 				/**
-				 * 11. 初始化剩下的单实例(非懒加载的)
+				 * 11. 初始化所有的单实例(非懒加载的)
 				 */
-				// 实例化所有剩余的(non-lazy-init)单例bean
+				// 实例化所有的(non-lazy-init)单例bean
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
@@ -621,7 +638,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				}
 
 				// Destroy already created singletons to avoid dangling resources.
-				// 发生异常,销毁已经创建的bean,以避免资源占用
+				// 为防止资源占用,在异常处理中,销毁已经在前面过程中生成的单例bean;
 				destroyBeans();
 
 				// Reset 'active' flag.
@@ -941,7 +958,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Finish the initialization of this context's bean factory,
 	 * initializing all remaining singleton beans.
 	 */
-	//TODO 初始化非延迟加载单例
+	/**
+	 * TODO 初始化非延迟加载的单例bean
+	 * @param beanFactory
+	 */
 	protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
 		// Initialize conversion service for this context.
 		if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &&
@@ -972,6 +992,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Instantiate all remaining (non-lazy-init) singletons.
 		// 初始化剩下的单实例(非懒加载的)
+		// 这里调用的是BeanFactory的preInstantiateSingletons,这个方法是有DefaultListableBeanFactory实现的
 		beanFactory.preInstantiateSingletons();
 	}
 

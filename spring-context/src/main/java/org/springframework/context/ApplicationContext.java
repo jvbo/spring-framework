@@ -55,8 +55,23 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.beans.factory.BeanFactory
  * @see org.springframework.core.io.ResourceLoader
  */
+
+/**
+ * TODO ioc容器的高级形态抽象,是ioc容器的高级表现形式;
+ * #ClassPathXmlApplicationContext #FileSystemXmlApplicationContext等实现了ApplicationContext,
+ * 增加了许多面向框架的特性,对应用环境作了许多适配;
+ * 继承了BeanFactory接口体系中的#ListableBeanFactory #HierarchicalBeanFactory,具备了ioc容器的基本功能;
+ * 通过继承 #MessageSource #ApplicationEventPublisher #ResourcePatternResolver(ResourceLoader)接口,
+ * 在BeanFactory简单ioc容器的基础上添加了许多对高级容器的特性的支持;
+ * 在
+ */
 public interface ApplicationContext extends EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,
 		MessageSource, ApplicationEventPublisher, ResourcePatternResolver {
+	/**
+	 * MessageSource:支持不同的信息源,这些信息源的扩展功能可以支持国际化的实现,为开发语言版本的应用提供服务;
+	 * ResourcePatternResolver:访问资源,可以从不同地方得到bean定义资源;
+	 * ApplicationEventPublisher:支持应用事件,从而在上下文中引入了事件机制,这些事件和bean的生命周期的结合为bean的管理提供了便利;
+	 */
 
 	/**
 	 * Return the unique id of this application context.

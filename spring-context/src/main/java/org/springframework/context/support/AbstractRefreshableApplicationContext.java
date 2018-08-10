@@ -120,10 +120,15 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * bean factory, shutting down the previous bean factory (if any) and
 	 * initializing a fresh bean factory for the next phase of the context's lifecycle.
 	 */
-	// TODO 刷新BeanFactory
+	/**
+	 * TODO 刷新BeanFactory;
+	 * 在这个方法中创建了BeanFactory;在创建ioc容器前,如果已经有容器存在,那么需要把已有的容器销毁和关闭,
+	 * 保证在refresh以后使用的是新建立起来的ioc容器;这里非常像重启动容器,就像重启动计算机那样;
+	 * @throws BeansException
+	 */
 	@Override
 	protected final void refreshBeanFactory() throws BeansException {
-		// 如果建立了BeanFactory,则关闭销毁BeanFactory
+		// 如果建立了BeanFactory,则销毁并关闭BeanFactory
 		if (hasBeanFactory()) {
 			destroyBeans();
 			closeBeanFactory();
@@ -132,7 +137,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 			/**
 			 * 1. 创建DefaultListableBeanFactory;
 			 */
-			// 创建并设置DefaultListableBeanFactory同时调用loadBeanDefinition载入loadBeanDefiniton
+			// 创建ioc容器,这里使用的是DefaultListableBeanFactory
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			/**
 			 * 2. 指定序列化id;
@@ -147,7 +152,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 			/**
 			 * 4. 加载BeanDefinition
 			 */
-			// 初始化DocumentReader,并进行xml文件读取及解析;
+			// 启动对BeanDefinition的载入
 			loadBeanDefinitions(beanFactory);
 			synchronized (this.beanFactoryMonitor) {
 				/**
@@ -223,6 +228,12 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#setAllowCircularReferences
 	 * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#setAllowRawInjectionDespiteWrapping
 	 */
+	/**
+	 * TODO 这就是在上下文中创建 #DefaultListableBeanFactory的地方,
+	 * 而 #getInternalParentBeanFactory() 的具体实现可以参看 #AbstractApplicationContext 中的实现,
+	 * 会根据容器已有的双亲ioc容器的信息来生成 #DefaultListableBeanFactory的双亲ioc容器;
+	 * @return
+	 */
 	protected DefaultListableBeanFactory createBeanFactory() {
 		return new DefaultListableBeanFactory(getInternalParentBeanFactory());
 	}
@@ -267,6 +278,13 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * @throws IOException if loading of bean definition files failed
 	 * @see org.springframework.beans.factory.support.PropertiesBeanDefinitionReader
 	 * @see org.springframework.beans.factory.xml.XmlBeanDefinitionReader
+	 */
+	/**
+	 * TODO 这里是使用BeanDefinitionReader载入Bean定义的地方,因为允许有多种载入方式,
+	 * 虽然用得最多的是xml方式,这个通过一个抽象函数把具体的实现委托给子类来完成;
+	 * @param beanFactory
+	 * @throws BeansException
+	 * @throws IOException
 	 */
 	protected abstract void loadBeanDefinitions(DefaultListableBeanFactory beanFactory)
 			throws BeansException, IOException;

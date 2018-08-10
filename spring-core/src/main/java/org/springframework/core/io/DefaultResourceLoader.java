@@ -140,10 +140,12 @@ public class DefaultResourceLoader implements ResourceLoader {
 	}
 
 
+	// TODO Resource定位的具体过程
 	@Override
 	public Resource getResource(String location) {
 		Assert.notNull(location, "Location must not be null");
 
+		// 这里处理带有classpath标识的Resource
 		for (ProtocolResolver protocolResolver : this.protocolResolvers) {
 			Resource resource = protocolResolver.resolve(location, this);
 			if (resource != null) {
@@ -160,11 +162,14 @@ public class DefaultResourceLoader implements ResourceLoader {
 		else {
 			try {
 				// Try to parse the location as a URL...
+				// 这里处理url标识的Resource定位
 				URL url = new URL(location);
 				return (ResourceUtils.isFileURL(url) ? new FileUrlResource(url) : new UrlResource(url));
 			}
 			catch (MalformedURLException ex) {
 				// No URL -> resolve as resource path.
+				// 如果既不是classpath,也不是url标识的Resource定位,则把getResource的重任交给getResourceByPath,
+				// 该方法是一个protected方法,默认的实现是得到一个ClassPathContextResource,这个方法常常会用子类来实现
 				return getResourceByPath(location);
 			}
 		}

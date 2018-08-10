@@ -98,6 +98,7 @@ import org.springframework.util.StringUtils;
  * @see RowMapper
  * @see org.springframework.jdbc.support.SQLExceptionTranslator
  */
+// TODO 模板类,封装了基本的数据库操作
 public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 
 	private static final String RETURN_RESULT_SET_PREFIX = "#result-set-";

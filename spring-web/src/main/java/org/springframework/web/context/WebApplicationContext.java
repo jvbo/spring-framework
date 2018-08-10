@@ -42,6 +42,10 @@ import org.springframework.lang.Nullable;
  * @since January 19, 2001
  * @see ServletContextAware#setServletContext
  */
+/**
+ * TODO 常用的应用上下文都是 #WebApplicationContext 或者 #ConfigurableApplicationContext 的实现
+ * 为了在web环境中使用ApplicationContext而设计;
+ */
 public interface WebApplicationContext extends ApplicationContext {
 
 	/**

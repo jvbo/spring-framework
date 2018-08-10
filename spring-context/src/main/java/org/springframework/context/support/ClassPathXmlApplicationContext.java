@@ -49,6 +49,10 @@ import org.springframework.util.Assert;
  * @see #getResourceByPath
  * @see GenericApplicationContext
  */
+
+/**
+ * TODO 类似 #FileSystemXmlApplicationContext
+ */
 public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContext {
 
 	@Nullable

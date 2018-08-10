@@ -40,6 +40,9 @@ import org.springframework.lang.Nullable;
  * @author Chris Beams
  * @since 03.11.2003
  */
+/**
+ * TODO 常用的应用上下文都是 #WebApplicationContext 或者 #ConfigurableApplicationContext 的实现
+ */
 public interface ConfigurableApplicationContext extends ApplicationContext, Lifecycle, Closeable {
 
 	/**

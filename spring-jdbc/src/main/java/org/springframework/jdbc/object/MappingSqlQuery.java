@@ -37,6 +37,7 @@ import org.springframework.lang.Nullable;
  * @author Jean-Pierre Pawlak
  * @see MappingSqlQueryWithParameters
  */
+// TODO 数据库数据记录映射到对象集合
 public abstract class MappingSqlQuery<T> extends MappingSqlQueryWithParameters<T> {
 
 	/**

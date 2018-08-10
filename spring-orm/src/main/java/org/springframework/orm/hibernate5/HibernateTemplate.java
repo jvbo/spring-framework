@@ -84,6 +84,7 @@ import org.springframework.util.ReflectionUtils;
  * @see org.springframework.orm.hibernate5.support.OpenSessionInViewFilter
  * @see org.springframework.orm.hibernate5.support.OpenSessionInViewInterceptor
  */
+// TODO 模板类,实现对Hibernate的驱动,封装了使用Hibernate的一些通用过程;
 public class HibernateTemplate implements HibernateOperations, InitializingBean {
 
 	private static final Method createQueryMethod;
