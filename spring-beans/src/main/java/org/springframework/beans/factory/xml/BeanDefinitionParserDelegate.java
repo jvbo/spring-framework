@@ -446,7 +446,7 @@ public class BeanDefinitionParserDelegate {
 		/**
 		 * 2. 进一步解析其他所有属性并统一封装至GenericBeanDefinition类型的实例中;
 		 */
-		// bean元素的详细解析
+		// 这个方法会引发对bean元素的详细解析
 		AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean);
 		if (beanDefinition != null) {
 			if (!StringUtils.hasText(beanName)) {
@@ -575,6 +575,7 @@ public class BeanDefinitionParserDelegate {
 
 			return bd;
 		}
+		// 下面这些异常是配置bean出现问题时常会看到的
 		catch (ClassNotFoundException ex) {
 			error("Bean class [" + className + "] not found", ele, ex);
 		}
@@ -774,11 +775,12 @@ public class BeanDefinitionParserDelegate {
 	 */
 	// TODO 解析子元素property
 	public void parsePropertyElements(Element beanEle, BeanDefinition bd) {
-		// 遍历bean所有子元素
+		// 遍历所有bean元素下定义的property元素
 		NodeList nl = beanEle.getChildNodes();
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
 			if (isCandidateElement(node) && nodeNameEquals(node, PROPERTY_ELEMENT)) {
+				// 在判断是property元素后对该property元素进行解析的过程
 				parsePropertyElement((Element) node, bd);
 			}
 		}
@@ -944,11 +946,16 @@ public class BeanDefinitionParserDelegate {
 		}
 		this.parseState.push(new PropertyEntry(propertyName));
 		try {
+			// 如果同一个bean中已经有同名的property存在,则不进行解析,直接返回,也就是说,
+			// 如果在同意个bean中已经有同名的property存在,那么起作用的只是第一个
+
 			// 不允许多次对同一属性配置,若果同一个bean中已经有相同名称的property存在,只有第一个起作用;
 			if (bd.getPropertyValues().contains(propertyName)) {
 				error("Multiple 'property' definitions for property '" + propertyName + "'", ele);
 				return;
 			}
+			// 这里是解析property值的地方,返回的对象对应对bean定义的property属性设置的解析解析结果,
+			// 这个解析结果会封装到PropertyValue中,然后设置到BeanDefinitionHolder中去
 			Object val = parsePropertyValue(ele, bd, propertyName);
 			PropertyValue pv = new PropertyValue(propertyName, val);
 			parseMetaElements(ele, pv);
@@ -1007,7 +1014,14 @@ public class BeanDefinitionParserDelegate {
 	 * Get the value of a property element. May be a list etc.
 	 * Also used for constructor arguments, "propertyName" being null in this case.
 	 */
-	// TODO 解析析构函数配置中的子元素
+	/**
+	 * TODO 解析析构函数配置中的子元素
+	 * 这里取得property元素的值,也许是一个list或其他
+	 * @param ele
+	 * @param bd
+	 * @param propertyName
+	 * @return
+	 */
 	@Nullable
 	public Object parsePropertyValue(Element ele, BeanDefinition bd, @Nullable String propertyName) {
 		String elementName = (propertyName != null) ?
@@ -1033,6 +1047,7 @@ public class BeanDefinitionParserDelegate {
 			}
 		}
 
+		// 这里判断property的属性,是ref还是value,不徐云同时是ref和value
 		// 解析constructor-arg上的ref属性
 		boolean hasRefAttribute = ele.hasAttribute(REF_ATTRIBUTE);
 		// 解析constructor-arg上的value属性
@@ -1048,6 +1063,7 @@ public class BeanDefinitionParserDelegate {
 					" is only allowed to contain either 'ref' attribute OR 'value' attribute OR sub-element", ele);
 		}
 
+		// 如果是ref,创建一个ref的数据对象RuntimeBeanReference,这个对象封装了ref的信息
 		if (hasRefAttribute) {
 			// ref属性的处理,使用RuntimeBeanRefence封装对应的ref名称
 			String refName = ele.getAttribute(REF_ATTRIBUTE);
@@ -1058,12 +1074,14 @@ public class BeanDefinitionParserDelegate {
 			ref.setSource(extractSource(ele));
 			return ref;
 		}
+		// 如果是value,创建一个value的数据对象TypedStringValue,这个对象封装了value的信息
 		else if (hasValueAttribute) {
 			// value属性的处理,使用TypedStringValue()封装
 			TypedStringValue valueHolder = new TypedStringValue(ele.getAttribute(VALUE_ATTRIBUTE));
 			valueHolder.setSource(extractSource(ele));
 			return valueHolder;
 		}
+		// 如果还有子元素,触发对子元素的解析
 		else if (subElement != null) {
 			// 解析子元素
 			/**
@@ -1096,7 +1114,7 @@ public class BeanDefinitionParserDelegate {
 	 * @param defaultValueType the default type (class name) for any
 	 * {@code <value>} tag that might be created
 	 */
-	// TODO 解析子元素
+	// TODO 解析子元素,对属性元素进行解析
 	@Nullable
 	public Object parsePropertySubElement(Element ele, @Nullable BeanDefinition bd, @Nullable String defaultValueType) {
 		if (!isDefaultNamespace(ele)) {
@@ -1262,6 +1280,7 @@ public class BeanDefinitionParserDelegate {
 		target.setSource(extractSource(collectionEle));
 		target.setElementTypeName(defaultElementType);
 		target.setMergeEnabled(parseMergeAttribute(collectionEle));
+		// 具体的list元素的解析过程
 		parseCollectionElements(nl, target, bd, defaultElementType);
 		return target;
 	}
@@ -1283,9 +1302,12 @@ public class BeanDefinitionParserDelegate {
 	protected void parseCollectionElements(
 			NodeList elementNodes, Collection<Object> target, @Nullable BeanDefinition bd, String defaultElementType) {
 
+		// 遍历所有的元素节点,并判断其类型是否为element
 		for (int i = 0; i < elementNodes.getLength(); i++) {
 			Node node = elementNodes.item(i);
 			if (node instanceof Element && !nodeNameEquals(node, DESCRIPTION_ELEMENT)) {
+				// 加入到target中,target是一个ManagedList,同时触发对下一层子元素的解析过程
+				// 这个一个递归调用
 				target.add(parsePropertySubElement((Element) node, bd, defaultElementType));
 			}
 		}

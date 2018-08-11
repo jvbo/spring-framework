@@ -71,6 +71,12 @@ public interface ApplicationContextAware extends Aware {
 	 * @throws BeansException if thrown by application context methods
 	 * @see org.springframework.beans.factory.BeanInitializationException
 	 */
+	/**
+	 * TODO 一个回调函数,在bean中通过实现这个函数,可以在容器回调概aware接口方法时使注入的applicationContext引用在bean中保存下来,
+	 * 供bean需要使用ApplicationContext的基本服务时使用;
+	 * @param applicationContext
+	 * @throws BeansException
+	 */
 	void setApplicationContext(ApplicationContext applicationContext) throws BeansException;
 
 }

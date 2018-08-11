@@ -38,6 +38,10 @@ import org.springframework.beans.BeansException;
  * @see InitializingBean
  * @see org.springframework.context.ApplicationContextAware
  */
+
+/**
+ * TODO 可以在bean中得到bean所在的ioc容器,从而直接在bean中使用ioc容器的服务;
+ */
 public interface BeanFactoryAware extends Aware {
 
 	/**

@@ -33,6 +33,10 @@ package org.springframework.beans.factory;
  * @see BeanFactoryAware
  * @see InitializingBean
  */
+
+/**
+ * TODO 可以在bean中得到它在ioc容器中的bean实例名称;
+ */
 public interface BeanNameAware extends Aware {
 
 	/**

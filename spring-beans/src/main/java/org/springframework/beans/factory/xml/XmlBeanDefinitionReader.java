@@ -329,6 +329,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 			throw new BeanDefinitionStoreException(
 					"Detected cyclic loading of " + encodedResource + " - check your import definitions!");
 		}
+		// 这里得到xml文件,并得到io的InputStream准备进行读取
 		try {
 			//从encodedResource中获取已经封装的Resource对象并再次从Resource中获取其中的inputStream
 			InputStream inputStream = encodedResource.getResource().getInputStream();
@@ -391,16 +392,24 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @see #doLoadDocument
 	 * @see #registerBeanDefinitions
 	 */
-	// TODO 加载BeanDefinitions,核心逻辑,具体过程
+	/**
+	 * TODO 加载BeanDefinitions,核心逻辑,具体过程;
+	 * 这是从特定的xml文件中实际载入BeanDefinition的地方
+	 * @param inputSource
+	 * @param resource
+	 * @return
+	 * @throws BeanDefinitionStoreException
+	 */
 	protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
 			throws BeanDefinitionStoreException {
 		//1.获取对xml文件的验证模型;
 		//2.加载xml文件,并得到对应的Document;
 		//3.根据返回的Document注册Bean信息
 		try {
-			// 取的xml文件的Document,解析过程室友DocumentLoader完成,默认是DefaultDocumentLoader
+			// 这里取得xml文件的Document对象,这个解析过程是由documentLoader完成的;
+			// 这个documentLoader是DefaultDocumentLoader,在定义documentLoader的地方创建
 			Document doc = doLoadDocument(inputSource, resource);
-			// 启动对BeanDefinition的详细解析过程,这个解析会使用到spring的bean配置规则
+			// 这里启动的是对BeanDefinition解析的详细过程,这个解析会使用到spring的bean配置规则
 			return registerBeanDefinitions(doc, resource);
 		}
 		catch (BeanDefinitionStoreException ex) {
@@ -521,7 +530,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 */
 	// TODO 解析及注册BeanDefinition
 	public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
-		// 得到BeanDefinitionDocumentReader对xml进行解析,使用DefaulBeanDefinitionDocumentReader实例化BeanDefinitionDocumentReader
+		// 得到BeanDefinitionDocumentReader来对xml进行解析,使用DefaulBeanDefinitionDocumentReader实例化BeanDefinitionDocumentReader
 		BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
 		// 在实例化BeanDefinitionReader的时候会将BeanDefinitionRegistry传入,默认使用继承DefaultListableBeanFactory的子类;
 		// 记录统计前BeanDefinition的加载个数

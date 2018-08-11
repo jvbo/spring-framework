@@ -190,6 +190,9 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 			}
 			object = new NullBean();
 		}
+		// 返回的已经是作为工厂FactoryBean生产的产品,而不是FactoryBean本身;
+		// 这种FactoryBean的机制可以为我们提供一个很好的封装机制,比如封装Proxy,RMI,JNDI等;
+		// 这个方法就是主要的FactoryBean的接口,需要实现特定的工厂的生产过程;
 		return object;
 	}
 

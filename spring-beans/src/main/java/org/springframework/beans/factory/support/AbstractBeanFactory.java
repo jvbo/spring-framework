@@ -112,6 +112,14 @@ import org.springframework.util.StringValueResolver;
  */
 // TODO 综合FactoryBeanRegistrySupport和ConfigurableBean
 public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
+	/**
+	 * ioc容器中bean的生命周期
+	 * 1. bean实例的创建;
+	 * 2. 为bean实例设置属性;
+	 * 3. 调用bean的初始化方法;
+	 * 4. 应用可以通故ioc容器使用bean;
+	 * 5. 当容器关闭时,调用bean的销毁方法;
+	 */
 
 	/** Parent bean factory, for bean inheritance support */
 	@Nullable
@@ -196,6 +204,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	// Implementation of BeanFactory interface
 	//---------------------------------------------------------------------
 
+	/**
+	 * 这里是BeanFactory接口的实现,比如getBean接口方法,
+	 * 这些getBean接口方法最终是通过调用doGetBean来实现的;
+	 */
+
 	@Override
 	public Object getBean(String name) throws BeansException {
 		return doGetBean(name, null, null, false);
@@ -237,7 +250,17 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @return an instance of the bean
 	 * @throws BeansException if the bean could not be created
 	 */
-	//TODO 依赖注入,执行获取bean
+	/**
+	 * TODO 依赖注入,执行获取bean,
+	 * 实际取得bean的地方,也是触发依赖注入发生的地方
+	 * @param name
+	 * @param requiredType
+	 * @param args
+	 * @param typeCheckOnly
+	 * @param <T>
+	 * @return
+	 * @throws BeansException
+	 */
 	@SuppressWarnings("unchecked")
 	protected <T> T doGetBean(final String name, @Nullable final Class<T> requiredType,
 			@Nullable final Object[] args, boolean typeCheckOnly) throws BeansException {
@@ -268,7 +291,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		 * 直接使用ObjectFactory
 		 *
 		 **/
-		// 先缓存取得的bean以及处理创建过的单例bean,单例模式的bean只能创建一次;
+		// 先从缓存中取得bean,处理那些已经被创建过的单例bean,单例模式的bean只能创建一次;
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args == null) {
 			if (logger.isDebugEnabled()) {
@@ -281,8 +304,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					logger.debug("Returning cached instance of singleton bean '" + beanName + "'");
 				}
 			}
-			// 这里完成FactoryBean的相关处理
-			//返回对应的bean实例,有时存在如BeanFactory的情况并不是直接返回实例本身而是返回指定方法返回的实例
+			// 这里的getObjectFaorBeanInstance完成的是FactoryBean的相关处理,以取得FactoryBean的生产结果,
+			// BeanFactory和FactoryBean有区别;
 			bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
 		}
 
@@ -304,8 +327,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			// 如果在当前的工厂中取不到,则到父类的BeanFactory中去取,
 			// 如果父类中取不到,则到父类的父类中取
 			BeanFactory parentBeanFactory = getParentBeanFactory();
-			// 如果beanDefinitionMap中也就是在所有已经加载的类中不包括beanName,
-			// 则尝试从parentBeanFactory中检测,当前容器的父容器存在,且当前容器不存在同名的bean
+			// 这里对ioc容器中的BeanDefinition是否存在进行检查,检查是否能在当前的BeanFactory中取得需要的bean,
+			// 如果在当前的工厂中取不到,则到双亲BeanFactory中去取;如果当前的双亲工厂取不到,那就顺着双亲BeanFactory链一直向上查找;
 			if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
 				// Not found -> check parent.
 				// 解析bean的原始名
@@ -341,7 +364,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				checkMergedBeanDefinition(mbd, beanName, args);
 
 				// Guarantee initialization of beans that the current bean depends on.
-				// 获取当前bean的所有依赖的名称
+				// 获取当前bean的所有依赖bean,这样会触发getBean的递归调用,知道取到一个没有任何依赖的bean为止;
 				String[] dependsOn = mbd.getDependsOn();
 				//若存在依赖,需要递归实例化依赖的bean
 				if (dependsOn != null) {
@@ -359,6 +382,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 				// Create bean instance.
 				// 是否单例模式
+				// 这里通过createBean方法创建单例bean的实例,这里有一个回调函数getObject,会在getSingleton中调用ObjectFactory的createBean;
 				if (mbd.isSingleton()) {
 					// singletion模式创建,使用一个匿名内部类,创建bean实例对象,并且注册对所依赖的对象
 					sharedInstance = getSingleton(beanName, () -> {
@@ -379,7 +403,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
 				}
 
-				//是否原型模式
+				// 是否原型模式
+				// 这里创建prototype bean
 				else if (mbd.isPrototype()) {
 					// It's a prototype -> create a new instance.
 					// prototype模式创建,会每次创建一个新对象;

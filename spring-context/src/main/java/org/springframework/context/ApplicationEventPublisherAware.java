@@ -28,6 +28,10 @@ import org.springframework.beans.factory.Aware;
  * @since 1.1.1
  * @see ApplicationContextAware
  */
+
+/**
+ * TODO 在bean中可以得到应用上下文的事件发布器,从而可以在bean中发布应用上下文事件;
+ */
 public interface ApplicationEventPublisherAware extends Aware {
 
 	/**

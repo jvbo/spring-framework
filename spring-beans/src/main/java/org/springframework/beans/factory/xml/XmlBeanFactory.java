@@ -52,14 +52,27 @@ import org.springframework.core.io.Resource;
  */
 
 /**
+ * TODO 已废弃,但思想依旧存在
+ * 只提供最基本的ioc容器的功能;
  * XmlBeanFactory是BeanFactory最简单的实现类;
- * XmlBeanFactory的功能建立在DefaultListableBeanFactory这个容器的基础上,并在这个容器的基础上实现了其他如xml读取的功能,
+ * XmlBeanFactory的功能建立在DefaultListableBeanFactory这个容器的基础上,并在这个容器的基础上扩展了其他如xml读取的功能,
  * DefaultListableBeanFactory是很重要的一个ioc实现;
+ * #ApplicationContext原理和XmlBeanFactory一样,也是通过持有或者扩展 #DefaultListableBeanFactory 来获得基本的ioc容器的功能的;
  */
 @Deprecated
 @SuppressWarnings({"serial", "all"})
 public class XmlBeanFactory extends DefaultListableBeanFactory {
+	/**
+	 * 通过factory对象来使用DefaultListableBeanFactory这个容器的步骤
+	 * (最原始的使用方式,在spring中,已经为用户提供了许多已经定义好的容器实现,例如 #ApplicationContext,所以ApplicationContext是一个高级形态意义的ioc容器):
+	 * 1. 创建ioc配置文件的抽象资源,这个抽象资源包含了BeanDefinition的定义信息;
+	 * 2. 创建一个BeanFactory,这里使用DefaultListableBeabFactory;
+	 * 3. 创建一个载入BeanDefinition的读取器,这里使用XmlBeanDefinitionReader来载入xml文件形式的BeanDefinition,通过回调配置给BeanFactory;
+	 * 4. 从定义好的资源位置读入配置信息,具体的解析过程由XmlBeanDefinitionReader来完成;
+	 * 完成整个载入和注册Bean定义之后,需要的ioc容器就建立起来了;
+	 */
 
+	// TODO 处理以XML方式定义的BeanDefinition
 	private final XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(this);
 
 
@@ -93,6 +106,7 @@ public class XmlBeanFactory extends DefaultListableBeanFactory {
 	 */
 	public XmlBeanFactory(Resource resource, BeanFactory parentBeanFactory) throws BeansException {
 		super(parentBeanFactory);
+		// ioc容器初始化的重要组成部分
 		this.reader.loadBeanDefinitions(resource);
 	}
 

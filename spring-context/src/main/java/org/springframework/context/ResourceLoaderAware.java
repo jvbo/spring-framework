@@ -59,6 +59,10 @@ import org.springframework.core.io.ResourceLoader;
  * @see org.springframework.core.io.support.PathMatchingResourcePatternResolver
  * @see org.springframework.context.support.ReloadableResourceBundleMessageSource
  */
+
+/**
+ * TODO 在bean中可以得到ResourceLoader,从而在bean中使用ResourceLoader加载外部对应的Resource资源;
+ */
 public interface ResourceLoaderAware extends Aware {
 
 	/**

@@ -55,6 +55,11 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.aop.framework.ProxyFactoryBean
  * @see org.springframework.jndi.JndiObjectFactoryBean
  */
+
+/**
+ * TODO 工厂模式,类似于工厂模式中的抽象工厂
+ * @param <T>
+ */
 public interface FactoryBean<T> {
 
 	/**

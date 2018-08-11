@@ -40,7 +40,11 @@ import org.springframework.lang.Nullable;
  * @see ConfigurableBeanFactory#addBeanPostProcessor
  * @see BeanFactoryPostProcessor
  */
-// TODO
+
+/**
+ * TODO bean的后置处理器,是一个监听器,可以监听容器触发的事件,
+ * 将它向ioc容器注册后,容器中管理的bean具备了接收ioc容器事件回调的能力;
+ */
 public interface BeanPostProcessor {
 
 	/**
@@ -55,6 +59,14 @@ public interface BeanPostProcessor {
 	 * if {@code null}, no subsequent BeanPostProcessors will be invoked
 	 * @throws org.springframework.beans.BeansException in case of errors
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet
+	 */
+	/**
+	 * TODO
+	 * 在bean初始化前提供回调入口
+	 * @param bean
+	 * @param beanName
+	 * @return
+	 * @throws BeansException
 	 */
 	@Nullable
 	default Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -82,8 +94,13 @@ public interface BeanPostProcessor {
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet
 	 * @see org.springframework.beans.factory.FactoryBean
 	 */
-	//TODO spring获取bean规则有规定,尽可能保证所有bean初始化后,
-	// 都会调用BeanPostProcessor接口的postProcessAfterInitialization()方法进行处理
+	/**
+	 * TODO 在bean初始化后提供回调入口
+	 * @param bean
+	 * @param beanName
+	 * @return
+	 * @throws BeansException
+	 */
 	@Nullable
 	default Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		return bean;

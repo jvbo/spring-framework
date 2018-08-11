@@ -40,6 +40,14 @@ import org.springframework.lang.Nullable;
  * @since 13.03.2003
  */
 public abstract class AopContext {
+	/**
+	 * aop技术:
+	 * 1. AspectJ: 源代码和字节码级别的编织器,用户需要使用不同于java的新语言;
+	 * 2. AspectWerkz: aop框架,使用字节码动态编织器和xml配置;
+	 * 3. JBoss-AOP: 基于拦截器和元数据的AOP框架,运行在jboss应用服务器上;以及在aop中用到的一些相关的技术实现;
+	 * 4. BCEL(Byte-Code Engineering Library): java字节码操作类库;
+	 * 5. Javassist: java字节码操作类库,jboss的一个子项目;
+	 */
 
 	/**
 	 * ThreadLocal holder for AOP proxy associated with this thread.

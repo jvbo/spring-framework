@@ -26,6 +26,9 @@ import org.springframework.aop.MethodBeforeAdvice;
  * @author Rod Johnson
  */
 @SuppressWarnings("serial")
+/**
+ * TODO 统计被调用的方法次数;
+ */
 public class CountingBeforeAdvice extends MethodCounter implements MethodBeforeAdvice {
 
 	@Override

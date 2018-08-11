@@ -41,6 +41,14 @@ import org.springframework.util.StringUtils;
  * @author Juergen Hoeller
  * @since 1.1
  */
+
+/**
+ * TODO #AbstractAutowireCapableBeanFactory 中 createBeanInstance() 使用CGLIB对bean进行实例化,
+ * 策略模式;
+ * 提供了两种实例化java对象的方法:
+ * 1. 通过BeanUtils,使用jvm的反射功能;
+ * 2. CGLIG; #instantiate()
+ */
 public class SimpleInstantiationStrategy implements InstantiationStrategy {
 
 	private static final ThreadLocal<Method> currentlyInvokedFactoryMethod = new ThreadLocal<>();
@@ -66,6 +74,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 		 * 因为可以在创建代理的同时将方法织入类中,但是如果没有需要动态改变的方法,
 		 * 为了方便,直接反射即可;
 		 */
+		// 这里取得指定的构造器或者生成对象的工厂方法来对bean进行实例化;
 		if (!bd.hasMethodOverrides()) {
 			// 指定构造器或者生成的对象工厂方法来对Bean进行实例化
 			Constructor<?> constructorToUse;
@@ -91,7 +100,8 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 					}
 				}
 			}
-			// 通过BeanUtils进行实例化,这个BeanUtils的实例化通过Constructor来完成
+			// 通过BeanUtils进行实例化,这个BeanUtils的实例化通过Constructor来实例化bean,
+			// 在BeanUtils中可以看到具体的调用ctor.newInstance(args);
 			return BeanUtils.instantiateClass(constructorToUse);
 		}
 		else {

@@ -37,8 +37,20 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.beans.factory.support.RootBeanDefinition
  * @see org.springframework.beans.factory.support.ChildBeanDefinition
  */
-// TODO 该接口用来管理基本spring的应用中的各种对象以及它们之间的相互依赖关系;
+
+/**
+ * TODO
+ * 该接口用来管理基于spring的应用中的各种对象以及它们之间的相互依赖关系;
+ * 抽象了对bean的定义,是让容器起作用的主要数据类型;
+ * 在计算机世界里,所有的功能都是建立在通过数据对现实进行抽象的基础上的;
+ * 对ioc容器来说,BeanDefinition就是对依赖反转模式中管理对象依赖关系的数据抽象,
+ * 也是容器实现依赖反转功能的核心数据结构,依赖反转功能都是围绕对BeanDefinition的处理来完成的;
+ */
 public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
+	/**
+	 * bean创建和依赖注入完成以后,在ioc容器中建立起一系列依靠依赖关系联系起来的bean,这个bean已经不是简单的java对象了;
+	 * 该bean系列以及bean之间的依赖关系建立完成以后,通过ioc容器的相关接口方法,就可以非常方便的供上层应用使用了;
+	 */
 
 	/**
 	 * Scope identifier for the standard singleton scope: "singleton".

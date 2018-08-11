@@ -30,6 +30,11 @@ package org.springframework.aop;
  * @see org.springframework.aop.support.ClassFilters
  * @see org.springframework.aop.support.MethodMatchers
  */
+
+/**
+ * TODO 决定Advice通知应该作用于哪个连接点,
+ * 也就是说通故Pointcut来定义需要增强的方法的集合,这些集合的选取可以按照一定的规则来完成;
+ */
 public interface Pointcut {
 
 	/**

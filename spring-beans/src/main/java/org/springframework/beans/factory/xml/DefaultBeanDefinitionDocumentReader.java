@@ -343,15 +343,21 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * Process the given bean element, parsing the bean definition
 	 * and registering it with the registry.
 	 */
-	// bean标签解析与注册,由BeanDefinitionParserDelegate解析,将结果存放到BeanDefinitonHolder中
+	/**
+	 * bean标签解析与注册,由BeanDefinitionParserDelegate解析,将结果存放到BeanDefinitonHolder中;
+	 * 得到了documentReader以后,为具体的spring bean的解析过程准备好了数据,这里是处理BeanDefinition的地方,
+	 * 具体的处理委托给BeanDefinitionParserDelegate;
+	 * @param ele
+	 * @param delegate
+	 */
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
 		/**
 		 * 1. 委托BeanDefinition类的parseBeanDefinitionElement()方法进行元素解析,
 		 * 返回BeanDefinition类型的实例bdHolder,经这个方法后,bdHolder实例已经包含我们配置文件中配置的各属性了,
 		 * 如class,name,id,alias之类的属性;
 		 */
-		// BeanDefinitionHolder是BeanDefinition的封装,封装了BeanDefinition,bean的名字,别名等;
-		// 用BeanDefinitionHolder来向ioc容器注册
+		// BeanDefinitionHolder是BeanDefinition的封装类,封装了BeanDefinition,bean的名字和别名,用它来完成向ioc容器注册;
+		// 得到这个BeanDefinitonHolder就意味着BeanDefinition是通过BeanDefinitionParserDelegate对xml元素的信息按照spring的bean规则进行解析得到的;
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 		if (bdHolder != null) {
 			/**
@@ -364,7 +370,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 				 * 3. 解析完成之后,需要对解析后的bdHolder进行注册,同样,注册操作委托给了BeanDefinitionReaderUtils的
 				 * registerBeanDefinition()方法
 				 */
-				// 向ioc容器注册bean
+				// 这里是想ioc容器注册解析得到BeanDefinition的地方;
 				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
 			}
 			catch (BeanDefinitionStoreException ex) {
@@ -375,6 +381,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			/**
 			 * 4. 最后发出响应事件,通知相关的监听器,这个bean已经加载完了
 			 */
+			// 在BeanDefinition向ioc容器注册完成以后,发送消息
 			getReaderContext().fireComponentRegistered(new BeanComponentDefinition(bdHolder));
 		}
 	}

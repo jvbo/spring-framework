@@ -58,6 +58,10 @@ import org.springframework.util.StringValueResolver;
  * @see org.springframework.context.ApplicationContextAware
  * @see org.springframework.context.support.AbstractApplicationContext#refresh()
  */
+
+/**
+ * TODO 可以在bean中得到所在的应用上下文,从而直接在bean中使用上下文的服务;
+ */
 class ApplicationContextAwareProcessor implements BeanPostProcessor {
 
 	private final ConfigurableApplicationContext applicationContext;
@@ -74,6 +78,13 @@ class ApplicationContextAwareProcessor implements BeanPostProcessor {
 	}
 
 
+	/**
+	 * TODO 作为依赖注入的一部分,这里会在 initializeBean的实现过程中被调用,从而实现aware接口的相关注入;
+	 * @param bean
+	 * @param beanName
+	 * @return
+	 * @throws BeansException
+	 */
 	@Override
 	@Nullable
 	public Object postProcessBeforeInitialization(final Object bean, String beanName) throws BeansException {

@@ -133,8 +133,43 @@ import org.springframework.lang.Nullable;
  * 6. 获取bean类型;
  * 7. 获取bean别名;
  */
-// TODO 定义获取bean及bean的各种属性
+
+/**
+ * TODO ioc容器最基本的接口类,是ioc容器的基本形式;提供了ioc容器所应该遵循的最基本的服务契约,
+ * 同时也是使用ioc容器所应遵守的最底层和最基本的编程规范;
+ * 定义获取bean及bean的各种属性;
+ * 这系列容器只实现了容器最基本的功能;
+ */
 public interface BeanFactory {
+	/**
+	 * 容器的基本工作原理:
+	 * 1. BeanDefinition的定位: 对ioc容器来说,它为管理pojo之间的依赖关系提供了帮助,
+	 * 但也要依据spring的定义规则提供bean定义信息,我们可以使用各种形式的bean定义信息,其中比较常用的是使用xml的文件格式;
+	 * 在bean定义方面,spring为用户提供了很大的灵活性;
+	 * 在初始化ioc容器的过程中,首先需要定位到这些有效的bean定义信息,这里spring使用Resource接口来统一这些bean定义信息,
+	 * 而这个定位由ResourceLoader来完成;
+	 * 如果使用上下文,ApplicationContext本身就为用户提供了定位的功能;因为上下文本身就是DefaultResourceLoader的子类;
+	 * 如果使用基本的BeanFactory作为ioc容器,客户需要做的额外工作就是为BeanFactory指定响应的Resource来完成Bean信息的定位;
+	 *
+	 * 2. 容器的初始化: 在使用上下文时,需要一个对它进行初始化的过程,完成初始化以后,这个ioc容器才是可用的;
+	 * 这个过程的入口是在refresh中实现的,这个refresh相当于容器的初始化函数;
+	 * 在初始化过程中,比较中要的部分是对BeanDefinition信息的载入和注册工作;
+	 * 相当于在ioc容器中需要建立一个BeanDefinition定义的数据映像,spring为了达到载入的灵活性,
+	 * 把载入的功能从ioc容器中分离出来,由BeanDefitionReader来完成Bean定义信息的读取,解析和ioc容器内部BeanDefinition的建立;
+	 * 在DefaultListableBeanFactory中,这些BeanDefinition被维护在一个HashMap中,
+	 * 以后的ioc容器对bean的管理和操作就是通过BeanDefition来完成的;
+	 */
+
+	/**
+	 * 容器管理的bean一般不需要了解容器的状态和直接使用容器,但在某些特殊条件下,是需要再bean中直接对ioc容器进行操作的;
+	 * 这时候,就需要再bean中设定对容器的感知;spring的ioc容器提供了该功能,它是通过特定的aware接口来完成的,有以下这些:
+	 * 1. BeanNameAware: 可以在bean中得到它在ioc容器中的bean实例名称;
+	 * 2. BeanFactoryAware: 可以在bean中得到bean所在的ioc容器,从而直接在bean中使用ioc容器的服务;
+	 * 3. ApplicationContextAware: 可以在bean中得到所在的应用上下文,从而直接在bean中使用上下文的服务;
+	 * 4. MessageSourceAware: 在bean中可以得到消息源;
+	 * 5. ApplicationEventPublisherAware: 在bean中可以得到应用上下文的事件发布器,从而可以在bean中发布应用上下文事件;
+	 * 6. ResourceLoaderAware: 在bean中可以得到ResourceLoader,从而在bean中使用ResourceLoader加载外部对应的Resource资源;
+	 */
 
 	/**
 	 * Used to dereference a {@link FactoryBean} instance and distinguish it from
@@ -143,7 +178,8 @@ public interface BeanFactory {
 	 * will return the factory, not the instance returned by the factory.
 	 */
 	/**
-	 * 转义符&,用来引用实例,或把它和工厂产生的bean分开,就是说,如果一个FactoryBean的名字如&XXX这样的,会得到那个Factory;
+	 * 转义符&,用来得到FactoryBean本身,用来区分通过容器来获取FactoryBean产生的对象和获取FactoryBean本身;
+	 * eg:myJndiObject是一个FactoryBean,那么使用&myJndiObject得到的是FactoryBean,而不是FactoryBean产生出来的对象;
 	 *
 	 * FactoryBean和BeanFactory是在spring中使用最为频繁的类,它们在拼写上很类似,一个是Factory,也就是ioc容器或对象工厂,
 	 * 一个是bean;在spring中,所有的bean都由BeanFactory(也就是ioc容器)来进行管理,但对FactoryBean来说,这个bean不是简单的bean,
@@ -168,6 +204,7 @@ public interface BeanFactory {
 	 * with the specified name
 	 * @throws BeansException if the bean could not be obtained
 	 */
+	// TODO 通过名称来获取bean
 	Object getBean(String name) throws BeansException;
 
 	/**
@@ -283,8 +320,7 @@ public interface BeanFactory {
 	 * @see #isPrototype
 	 */
 	/**
-	 * 是否singlton(单例)bean,
-	 * singleton属性,可以在BeanDefinition中设置;
+	 * 是否singlton(单例)bean,该属性由用户在BeanDefinition中指定;
 	 * @param name
 	 * @return
 	 * @throws NoSuchBeanDefinitionException
@@ -308,7 +344,7 @@ public interface BeanFactory {
 	 * @see #isSingleton
 	 */
 	/**
-	 * 是否prototypr(原型)bean
+	 * 是否prototypr(原型)bean,该属性由用户在BeanDefinition中指定;
 	 * @param name
 	 * @return
 	 * @throws NoSuchBeanDefinitionException
@@ -398,8 +434,7 @@ public interface BeanFactory {
 	 * @see #getBean
 	 */
 	/**
-	 * 获取名称name的bean的别名,
-	 * 别名在BeanDefinition中设置;
+	 * 获取名称name的bean的别名,别名由用户在BeanDefinition中设置;
 	 * @param name
 	 * @return
 	 */

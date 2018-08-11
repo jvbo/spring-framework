@@ -101,12 +101,17 @@ class BeanDefinitionValueResolver {
 	 * @param value the value object to resolve
 	 * @return the resolved object
 	 */
-	// TODO 属性值的解析
+	/**
+	 * TODO 所有对注入类型的处理,属性值的解析
+	 * @param argName
+	 * @param value
+	 * @return
+	 */
 	@Nullable
 	public Object resolveValueIfNecessary(Object argName, @Nullable Object value) {
 		// We must check each value to see whether it requires a runtime reference
 		// to another bean to be resolved.
-		// 对应用类型的值进行解析
+		// 这里对RuntimeBeanReference进行解析,RuntimeBeanReference是在对BeanDefinition进行解析时生成的数据对象
 		if (value instanceof RuntimeBeanReference) {
 			RuntimeBeanReference ref = (RuntimeBeanReference) value;
 			// 调用引用类型属性的解析方法
@@ -136,7 +141,7 @@ class BeanDefinitionValueResolver {
 					ObjectUtils.getIdentityHexString(bd);
 			return resolveInnerBean(argName, innerBeanName, bd);
 		}
-		// 对集合数组类型的属性解析
+		// 这里对ManagedArray进行解析,对集合数组类型的属性解析
 		else if (value instanceof ManagedArray) {
 			// May need to resolve contained runtime references.
 			ManagedArray array = (ManagedArray) value;
@@ -166,19 +171,22 @@ class BeanDefinitionValueResolver {
 			// 创建指定类型的数组
 			return resolveManagedArray(argName, (List<?>) value, elementType);
 		}
+		// 对ManagedList进行解析
 		else if (value instanceof ManagedList) {
 			// May need to resolve contained runtime references.
 			return resolveManagedList(argName, (List<?>) value);
 		}
+		// 对ManagedSet进行解析
 		else if (value instanceof ManagedSet) {
 			// May need to resolve contained runtime references.
 			return resolveManagedSet(argName, (Set<?>) value);
 		}
+		// 对ManagedMap进行解析
 		else if (value instanceof ManagedMap) {
 			// May need to resolve contained runtime references.
 			return resolveManagedMap(argName, (Map<?, ?>) value);
 		}
-		// 解析props类型的属性值,props其实就是key和value均为字符创的map
+		// 对ManagedProperties进行解析
 		else if (value instanceof ManagedProperties) {
 			Properties original = (Properties) value;
 			// 创建一个拷贝,用于作为解析后的返回值
@@ -199,7 +207,7 @@ class BeanDefinitionValueResolver {
 			});
 			return copy;
 		}
-		// 解析字符串类型的属性值
+		// 对TypedStringValue进行解析
 		else if (value instanceof TypedStringValue) {
 			// Convert value to target type here.
 			TypedStringValue typedStringValue = (TypedStringValue) value;
@@ -365,12 +373,20 @@ class BeanDefinitionValueResolver {
 	/**
 	 * Resolve a reference to another bean in the factory.
 	 */
+	/**
+	 * TODO 对RuntimeBeanReference类型的注入
+	 * @param argName
+	 * @param ref
+	 * @return
+	 */
 	@Nullable
 	private Object resolveReference(Object argName, RuntimeBeanReference ref) {
 		try {
 			Object bean;
+			// 从RuntimeBeanReference取得reference的名字,这个RuntimeBeanReference是在载入BeanDefinition时根据配置生成的;
 			String refName = ref.getBeanName();
 			refName = String.valueOf(doEvaluate(refName));
+			// 如果ref是在双亲ioc容器中,那就到双亲ioc中去获取;
 			if (ref.isToParent()) {
 				if (this.beanFactory.getParentBeanFactory() == null) {
 					throw new BeanCreationException(
@@ -380,6 +396,7 @@ class BeanDefinitionValueResolver {
 				}
 				bean = this.beanFactory.getParentBeanFactory().getBean(refName);
 			}
+			// 在当前ioc容器中去获取bean,这里会触发一个getBean过程,如果依赖注入没有发生,这里会车发相应的依赖注入的发生
 			else {
 				bean = this.beanFactory.getBean(refName);
 				this.beanFactory.registerDependentBean(refName, this.beanName);
@@ -399,6 +416,13 @@ class BeanDefinitionValueResolver {
 	/**
 	 * For each element in the managed array, resolve reference if necessary.
 	 */
+	/**
+	 * TODO 对其他类型的属性进行注入的例子,这里array
+	 * @param argName
+	 * @param ml
+	 * @param elementType
+	 * @return
+	 */
 	private Object resolveManagedArray(Object argName, List<?> ml, Class<?> elementType) {
 		Object resolved = Array.newInstance(elementType, ml.size());
 		for (int i = 0; i < ml.size(); i++) {
@@ -410,6 +434,13 @@ class BeanDefinitionValueResolver {
 
 	/**
 	 * For each element in the managed list, resolve reference if necessary.
+	 */
+	/**
+	 * TODO 对其他类型的属性进行注入的例子,这里list,
+	 * 对于每一个在list中的元素,都会依次进行解析
+	 * @param argName
+	 * @param ml
+	 * @return
 	 */
 	private List<?> resolveManagedList(Object argName, List<?> ml) {
 		List<Object> resolved = new ArrayList<>(ml.size());

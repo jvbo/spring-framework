@@ -29,6 +29,10 @@ import org.springframework.lang.Nullable;
  *
  * @author Rod Johnson
  */
+
+/**
+ * TODO 定义了为待增强的目标方法设置的前置增强接口;
+ */
 public interface MethodBeforeAdvice extends BeforeAdvice {
 
 	/**
@@ -41,6 +45,7 @@ public interface MethodBeforeAdvice extends BeforeAdvice {
 	 * allowed by the method signature. Otherwise the exception
 	 * will be wrapped as a runtime exception.
 	 */
+	// TODO 在调用目标方法时被回调
 	void before(Method method, Object[] args, @Nullable Object target) throws Throwable;
 
 }

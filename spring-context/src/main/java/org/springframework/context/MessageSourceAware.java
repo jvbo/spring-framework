@@ -31,6 +31,10 @@ import org.springframework.beans.factory.Aware;
  * @since 1.1.1
  * @see ApplicationContextAware
  */
+
+/**
+ * TODO 在bean中可以得到消息源;
+ */
 public interface MessageSourceAware extends Aware {
 
 	/**

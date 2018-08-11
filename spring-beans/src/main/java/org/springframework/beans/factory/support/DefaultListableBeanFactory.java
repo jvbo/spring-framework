@@ -114,7 +114,13 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.beans.factory.xml.XmlBeanDefinitionReader
  */
 @SuppressWarnings("serial")
-// TODO Bean核心类,绝大多数功能都实现了,主要是对Bean注册后的处理
+/**
+ * TODO Bean核心类,绝大多数功能都实现了,主要是对Bean注册后的处理;
+ * 基本的ioc容器实现,包含了基本ioc容器所具有的重要功能;
+ * 作为一个默认的功能完整的ioc容器来使用的;
+ * 继承了 #ConfigurableListableBeanFactory(ConfigurableBeanFactory),
+ * #XmlBeanFactory,是在此基础上做扩展的
+ */
 public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
 		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
 
@@ -725,6 +731,10 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		return (this.configurationFrozen || super.isBeanEligibleForMetadataCaching(beanName));
 	}
 
+	/**
+	 * TODO 对单例bean进行预初始化;
+	 * @throws BeansException
+	 */
 	@Override
 	public void preInstantiateSingletons() throws BeansException {
 		if (this.logger.isDebugEnabled()) {
@@ -736,6 +746,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
 
 		// Trigger initialization of all non-lazy singleton beans...
+		// 在这里就开始getBean,也就是触发bean的依赖注入,这个getBean和触发依赖注入的过程是一样的,只是发生的地方不同;
+		// 如果不设置lazy-init属性,那么这个依赖注入是发生在容器初始化结束以后;
+		// 第一次向容器发出getBean时,如果设置了lazy-init属性为false(默认为true),那么依赖注入发生在容器初始化的过程中,
+		// 会对beanDefinitionMap中所有的bean进行依赖注入,这样在初始化结束以后,容器执行getBean得到的就是已经准备好的bean,
+		// 不需要再进行依赖注入;
 		for (String beanName : beanNames) {
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {

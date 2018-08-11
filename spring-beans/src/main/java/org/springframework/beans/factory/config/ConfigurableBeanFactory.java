@@ -48,7 +48,10 @@ import org.springframework.util.StringValueResolver;
  * @see org.springframework.beans.factory.ListableBeanFactory
  * @see ConfigurableListableBeanFactory
  */
-// TODO 提供配置Factory的各种方法
+
+/**
+ * TODO 主要定义了一些对BeanFactory的配置功能;
+ */
 public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, SingletonBeanRegistry {
 
 	/**
@@ -75,6 +78,7 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
 	 * a parent BeanFactory
 	 * @see #getParentBeanFactory()
 	 */
+	// TODO 设置双亲ioc容器
 	void setParentBeanFactory(BeanFactory parentBeanFactory) throws IllegalStateException;
 
 	/**
@@ -241,6 +245,7 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
 	 * will always be applied after programmatically registered ones.
 	 * @param beanPostProcessor the post-processor to register
 	 */
+	// TODO 配置bean后置处理器
 	void addBeanPostProcessor(BeanPostProcessor beanPostProcessor);
 
 	/**
