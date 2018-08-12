@@ -38,6 +38,9 @@ import java.util.regex.PatternSyntaxException;
  * @since 1.1
  */
 @SuppressWarnings("serial")
+/**
+ * TODO 正则表达式切点,通过正则表达式对方法名进行匹配;
+ */
 public class JdkRegexpMethodPointcut extends AbstractRegexpMethodPointcut {
 
 	/**
