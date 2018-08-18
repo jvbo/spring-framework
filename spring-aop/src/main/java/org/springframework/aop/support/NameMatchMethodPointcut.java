@@ -35,6 +35,9 @@ import org.springframework.util.PatternMatchUtils;
  * @since 11.02.2004
  * @see #isMatch
  */
+/**
+ * TODO 通过方法名匹配进行Advice匹配
+ */
 @SuppressWarnings("serial")
 public class NameMatchMethodPointcut extends StaticMethodMatcherPointcut implements Serializable {
 
@@ -77,6 +80,13 @@ public class NameMatchMethodPointcut extends StaticMethodMatcherPointcut impleme
 	}
 
 
+	/**
+	 * TODO 方法名相同或者方法名相匹配
+	 * @param method the candidate method
+	 * @param targetClass the target class (may be {@code null}, in which case
+	 * the candidate class must be taken to be the method's declaring class)
+	 * @return
+	 */
 	@Override
 	public boolean matches(Method method, @Nullable Class<?> targetClass) {
 		for (String mappedName : this.mappedNames) {

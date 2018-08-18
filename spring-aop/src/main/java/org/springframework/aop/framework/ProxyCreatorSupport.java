@@ -29,6 +29,10 @@ import org.springframework.util.Assert;
  * @since 2.0.3
  * @see #createAopProxy()
  */
+
+/**
+ * TODO 辅助生成代理对象
+ */
 @SuppressWarnings("serial")
 public class ProxyCreatorSupport extends AdvisedSupport {
 
@@ -102,6 +106,7 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 		if (!this.active) {
 			activate();
 		}
+		// 通过AopProxyFactory取得AopProxy,这个AopProxyFactory是在初始化函数中定义的,使用的是DefaultAopProxyFactory;
 		return getAopProxyFactory().createAopProxy(this);
 	}
 

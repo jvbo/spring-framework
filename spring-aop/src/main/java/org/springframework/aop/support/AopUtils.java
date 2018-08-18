@@ -335,10 +335,19 @@ public abstract class AopUtils {
 	 * @throws Throwable if thrown by the target method
 	 * @throws org.springframework.aop.AopInvocationException in case of a reflection error
 	 */
+	/**
+	 * TODO 使用反射完成目标对象的方法调用
+	 * @param target
+	 * @param method
+	 * @param args
+	 * @return
+	 * @throws Throwable
+	 */
 	@Nullable
 	public static Object invokeJoinpointUsingReflection(@Nullable Object target, Method method, Object[] args)
 			throws Throwable {
 
+		// 使用反射调用target对象方法的地方
 		// Use reflection to invoke the method.
 		try {
 			ReflectionUtils.makeAccessible(method);
@@ -347,6 +356,7 @@ public abstract class AopUtils {
 		catch (InvocationTargetException ex) {
 			// Invoked method threw a checked exception.
 			// We must rethrow it. The client won't see the interceptor.
+			// 抛出aop异常,对异常进行转换;
 			throw ex.getTargetException();
 		}
 		catch (IllegalArgumentException ex) {

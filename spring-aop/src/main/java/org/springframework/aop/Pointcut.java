@@ -32,7 +32,7 @@ package org.springframework.aop;
  */
 
 /**
- * TODO 决定Advice通知应该作用于哪个连接点,
+ * TODO 关注点的设计,决定Advice通知应该作用于哪个连接点,
  * 也就是说通故Pointcut来定义需要增强的方法的集合,这些集合的选取可以按照一定的规则来完成;
  */
 public interface Pointcut {

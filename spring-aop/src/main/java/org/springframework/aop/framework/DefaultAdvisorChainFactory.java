@@ -44,10 +44,15 @@ import org.springframework.lang.Nullable;
  * @author Adrian Colyer
  * @since 2.0.3
  */
+
+/**
+ * TODO 负责生成拦截器链
+ */
 @SuppressWarnings("serial")
 public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializable {
 
 	/**
+	 * TODO 生成拦截器链
 	 * 从提供的的配置实例config中获取advisor列表,遍历处理这些advisor,如果是IntroductionAdvisor,
 	 * 则判断此advisor能否应用到目标类targetClass上,如果是PointcutAdvisor,则判断此advisor能否应用到
 	 * 目标方法method上,将满足条件的advisor通过AdvisorAdaptor转化成Interceptor列表返回
@@ -63,11 +68,13 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 
 		// This is somewhat tricky... We have to process introductions first,
 		// but we need to preserve order in the ultimate list.
+		// advisor链已经在config中持有了,这里可以直接使用
 		List<Object> interceptorList = new ArrayList<>(config.getAdvisors().length);
 		Class<?> actualClass = (targetClass != null ? targetClass : method.getDeclaringClass());
 		// 查看是否包含IntroductionAdvisor,用于将advisor转换成MethodInterceptor
 		boolean hasIntroductions = hasMatchingIntroductions(config, actualClass);
 		// 这里实际上注册一系列AdvisorAdaptor,用于将advisor转化成MethodInterceptor
+		// 得到注册器GlobalAdvisorAdapterRegistry,单例实现
 		AdvisorAdapterRegistry registry = GlobalAdvisorAdapterRegistry.getInstance();
 
 		for (Advisor advisor : config.getAdvisors()) {
@@ -75,15 +82,17 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 				// Add it conditionally.
 				PointcutAdvisor pointcutAdvisor = (PointcutAdvisor) advisor;
 				if (config.isPreFiltered() || pointcutAdvisor.getPointcut().getClassFilter().matches(actualClass)) {
-					// 这两个方法位置可以互换
-					// 将advisor转化成Interceptor
+					// 拦截器链是通过 #AdvisorAdapterRegistry 来加入的,
+					// 这个AdvisorAdapterRegistry对advice织入起了很大的作用;
 					MethodInterceptor[] interceptors = registry.getInterceptors(advisor);
 					// 检查当前advisor的pointcut是否可以匹配当前方法
 					MethodMatcher mm = pointcutAdvisor.getPointcut().getMethodMatcher();
+					// 使用MethodMatches的matches()进行匹配判断
 					if (MethodMatchers.matches(mm, method, actualClass, hasIntroductions)) {
 						if (mm.isRuntime()) {
 							// Creating a new object instance in the getInterceptors() method
 							// isn't a problem as we normally cache created chains.
+							// 在 #getInterceptors() 中创建新的实例
 							for (MethodInterceptor interceptor : interceptors) {
 								interceptorList.add(new InterceptorAndDynamicMethodMatcher(interceptor, mm));
 							}

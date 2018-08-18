@@ -32,6 +32,10 @@ import org.springframework.util.Assert;
  *
  * @author Rod Johnson
  */
+
+/**
+ * TODO #AfterReturningAdvice 拦截器实现
+ */
 @SuppressWarnings("serial")
 public class AfterReturningAdviceInterceptor implements MethodInterceptor, AfterAdvice, Serializable {
 
@@ -41,6 +45,10 @@ public class AfterReturningAdviceInterceptor implements MethodInterceptor, After
 	/**
 	 * Create a new AfterReturningAdviceInterceptor for the given advice.
 	 * @param advice the AfterReturningAdvice to wrap
+	 */
+	/**
+	 * TODO 为指定的advice创建AfterReturningAdviceInterceptor对象
+	 * @param advice
 	 */
 	public AfterReturningAdviceInterceptor(AfterReturningAdvice advice) {
 		Assert.notNull(advice, "Advice must not be null");

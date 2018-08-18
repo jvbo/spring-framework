@@ -29,6 +29,10 @@ import org.springframework.lang.Nullable;
  * @author Juergen Hoeller
  * @see DefaultAopProxyFactory
  */
+
+/**
+ * TODO AopProxy
+ */
 public interface AopProxy {
 
 	/**

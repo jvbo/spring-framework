@@ -117,6 +117,12 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 		return getProxy(ClassUtils.getDefaultClassLoader());
 	}
 
+	/**
+	 * TODO 获取代理
+	 * @param classLoader the class loader to create the proxy with
+	 * (or {@code null} for the low-level proxy facility's default)
+	 * @return
+	 */
 	@Override
 	public Object getProxy(@Nullable ClassLoader classLoader) {
 		if (logger.isDebugEnabled()) {
@@ -124,7 +130,8 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 		}
 		Class<?>[] proxiedInterfaces = AopProxyUtils.completeProxiedInterfaces(this.advised, true);
 		findDefinedEqualsAndHashCodeMethods(proxiedInterfaces);
-		// 调用jdk生成代理的地方
+		// 调用jdk生成代理的地方,
+		// 三个参数:类加载器,代理接口,Proxy回调方法所在的对象(需要实现InvocationHandler接口的invoke())
 		return Proxy.newProxyInstance(classLoader, proxiedInterfaces, this);
 	}
 
@@ -156,7 +163,16 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 	 * <p>Callers will see exactly the exception thrown by the target,
 	 * unless a hook method throws an exception.
 	 */
-	// TODO 实现InvocationHandler唯一方法invoke
+	/**
+	 * TODO 实现InvocationHandler唯一方法invoke;
+	 * 当Proxy对象的代理方法被调用时,此方法作为Proxy对象的回调函数被触发,
+	 * 从而通过invoke的具体实现,来完成对目标对象方法调用的拦截或者说功能增强的工作;
+	 * @param proxy
+	 * @param method
+	 * @param args
+	 * @return
+	 * @throws Throwable
+	 */
 	@Override
 	@Nullable
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -171,21 +187,23 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 			// equals方法处理
 			if (!this.equalsDefined && AopUtils.isEqualsMethod(method)) {
 				// The target does not implement the equals(Object) method itself.
+				// 如果目标对象没有实现Object类的equal();
 				return equals(args[0]);
 			}
 			// hashCode方法处理
 			else if (!this.hashCodeDefined && AopUtils.isHashCodeMethod(method)) {
 				// The target does not implement the hashCode() method itself.
+				// 如果目标对象没有实现Object类的hashCode()
 				return hashCode();
 			}
 			else if (method.getDeclaringClass() == DecoratingProxy.class) {
 				// There is only getDecoratedClass() declared -> dispatch to proxy config.
 				return AopProxyUtils.ultimateTargetClass(this.advised);
 			}
-			// 根据代理对象配置调用服务
 			else if (!this.advised.opaque && method.getDeclaringClass().isInterface() &&
 					method.getDeclaringClass().isAssignableFrom(Advised.class)) {
 				// Service invocations on ProxyConfig with the proxy config...
+				// 根据代理对象配置调用服务
 				return AopUtils.invokeJoinpointUsingReflection(this.advised, method, args);
 			}
 
@@ -200,16 +218,18 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 
 			// Get as late as possible to minimize the time we "own" the target,
 			// in case it comes from a pool.
+			// 得到目标对象的地方
 			target = targetSource.getTarget();
 			Class<?> targetClass = (target != null ? target.getClass() : null);
 
 			// Get the interception chain for this method.
-			// 获取当前方法的拦截器调用
+			// 这里获得定义好的拦截器链
+			// 获得拦截器的操作是由advised对象完成的;
 			List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
 
 			// Check whether we have any advice. If we don't, we can fallback on direct
 			// reflective invocation of the target, and avoid creating a MethodInvocation.
-			// 如果没有发现拦截器则直接调用切点方法
+			// 如果没有设定拦截器,那么就直接调用target的对应方法
 			if (chain.isEmpty()) {
 				// We can skip creating a MethodInvocation: just invoke the target directly
 				// Note that the final invoker must be an InvokerInterceptor so we know it does
@@ -219,10 +239,11 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 			}
 			else {
 				// We need to create a method invocation...
-				// 将拦截器封装在ReflectiveMethodInvocation中
+				// 如果有拦截器的设定,那么需要调用拦截器之后才调用目标对象的相应方法
+				// 通过构造一个 #ReflectiveMathodInvocation来实现
 				invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
 				// Proceed to the joinpoint through the interceptor chain.
-				// 执行拦截器链
+				// 沿着拦截器链继续前进
 				retVal = invocation.proceed();
 			}
 

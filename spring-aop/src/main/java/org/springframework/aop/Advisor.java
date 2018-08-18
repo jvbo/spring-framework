@@ -33,6 +33,10 @@ import org.aopalliance.aop.Advice;
  * @author Rod Johnson
  * @author Juergen Hoeller
  */
+
+/**
+ * TODO 把Advice和Pointcut结合起来,可以定义应该使用哪个通知并在哪个关注点使用它;开箱即用的aop基础设施;
+ */
 public interface Advisor {
 
 	/**

@@ -59,6 +59,10 @@ import org.springframework.util.CollectionUtils;
  * @author Juergen Hoeller
  * @see org.springframework.aop.framework.AopProxy
  */
+
+/**
+ * TODO 封装了AOP对通知和通知器的相关操作;
+ */
 public class AdvisedSupport extends ProxyConfig implements Advised {
 
 	/** use serialVersionUID from Spring 2.0 for interoperability */
@@ -476,7 +480,18 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	 * @param targetClass the target class
 	 * @return List of MethodInterceptors (may also include InterceptorAndDynamicMethodMatchers)
 	 */
+	/**
+	 * TODO 获取拦截器链,
+	 * 为提高拦截器链的效率,这里设置了缓存;
+	 * @param method
+	 * @param targetClass
+	 * @return
+	 */
 	public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, @Nullable Class<?> targetClass) {
+		/**
+		 * 这里使用了cache,利用cache去获取已有的interceptors,但是第一次还是需要自己动手生成的;
+		 * 这个interceptor链的生成由 advisorChainFactory 完成的,在这里使用的是 #DefaultAdvisorChainFactory;
+		 */
 		MethodCacheKey cacheKey = new MethodCacheKey(method);
 		List<Object> cached = this.methodCache.get(cacheKey);
 		if (cached == null) {

@@ -24,11 +24,17 @@ package org.springframework.aop.framework.adapter;
  * @author Phillip Webb
  * @see DefaultAdvisorAdapterRegistry
  */
+
+/**
+ * TODO 提供 #DefaultAdvisorAdapterRegistry 的单例实现
+ * abstract 不能被实例化
+ */
 public abstract class GlobalAdvisorAdapterRegistry {
 
 	/**
 	 * Keep track of a single instance so we can return it to classes that request it.
 	 */
+	// 单例实现,使用static变量来保持持有一个唯一实例
 	private static AdvisorAdapterRegistry instance = new DefaultAdvisorAdapterRegistry();
 
 	/**

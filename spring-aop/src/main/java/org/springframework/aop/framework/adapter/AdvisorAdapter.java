@@ -34,6 +34,10 @@ import org.springframework.aop.Advisor;
  *
  * @author Rod Johnson
  */
+
+/**
+ * TODO 适配器模式
+ */
 public interface AdvisorAdapter {
 
 	/**

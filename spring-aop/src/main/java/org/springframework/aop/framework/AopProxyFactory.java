@@ -41,6 +41,10 @@ package org.springframework.aop.framework;
  * @author Rod Johnson
  * @author Juergen Hoeller
  */
+
+/**
+ * TODO aop代理对象生成接口定义
+ */
 public interface AopProxyFactory {
 
 	/**

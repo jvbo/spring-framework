@@ -52,6 +52,10 @@ import org.springframework.util.Assert;
  * @author Rod Johnson
  * @author Juergen Hoeller
  */
+
+/**
+ * TODO #ThrowsAdvice 拦截器实现
+ */
 public class ThrowsAdviceInterceptor implements MethodInterceptor, AfterAdvice {
 
 	private static final String AFTER_THROWING = "afterThrowing";
@@ -75,6 +79,7 @@ public class ThrowsAdviceInterceptor implements MethodInterceptor, AfterAdvice {
 		Assert.notNull(throwsAdvice, "Advice must not be null");
 		this.throwsAdvice = throwsAdvice;
 
+		// 配置ThrowsAdvice的回调方法
 		Method[] methods = throwsAdvice.getClass().getMethods();
 		for (Method method : methods) {
 			if (method.getName().equals(AFTER_THROWING) &&
@@ -82,6 +87,7 @@ public class ThrowsAdviceInterceptor implements MethodInterceptor, AfterAdvice {
 					Throwable.class.isAssignableFrom(method.getParameterTypes()[method.getParameterCount() - 1])
 				) {
 				// Have an exception handler
+				// 配置异常处理
 				this.exceptionHandlerMap.put(method.getParameterTypes()[method.getParameterCount() - 1], method);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Found exception handler method: " + method);
@@ -123,6 +129,8 @@ public class ThrowsAdviceInterceptor implements MethodInterceptor, AfterAdvice {
 
 	@Override
 	public Object invoke(MethodInvocation mi) throws Throwable {
+		// 把对目标对象的方法调用放入try/catch中,并在catch中触发ThrowsAdvice的回调,
+		// 把异常接着向外抛出,不做过多的处理;
 		try {
 			return mi.proceed();
 		}
@@ -135,6 +143,13 @@ public class ThrowsAdviceInterceptor implements MethodInterceptor, AfterAdvice {
 		}
 	}
 
+	/**
+	 * TODO 通故反射启动对ThrowsAdvice回调方法的调用
+	 * @param mi
+	 * @param ex
+	 * @param method
+	 * @throws Throwable
+	 */
 	private void invokeHandlerMethod(MethodInvocation mi, Throwable ex, Method method) throws Throwable {
 		Object[] handlerArgs;
 		if (method.getParameterCount() == 1) {

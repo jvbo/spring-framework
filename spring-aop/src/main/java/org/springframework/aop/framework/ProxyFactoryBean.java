@@ -90,9 +90,24 @@ import org.springframework.util.ObjectUtils;
  * @see org.springframework.aop.Advisor
  * @see Advised
  */
+
+/**
+ * TODO 代理对象生成,是spring-ioc环境中创建aop应用的底层方法;
+ * spring通过它完成了对aop使用的封装;
+ */
 @SuppressWarnings("serial")
 public class ProxyFactoryBean extends ProxyCreatorSupport
 		implements FactoryBean<Object>, BeanClassLoaderAware, BeanFactoryAware {
+	/**
+	 * 通过一些列配置步骤来使用ProxyFactoryBean和aop;
+	 * 1. 定义使用的通知其Advisor,这个通知器应该作为一个Bean来定义;
+	 * 这个通知其的实现定义了需要对目标对象进行增强的切面行为,也就是Advice通知;
+	 * 2. 定义ProxyFactoryBean,把它作为另一个Bean的定义,它是封装aop功能的主要类;
+	 * 在配置ProxyFactoryBean时,需要设定与aop实现相关的重要属性,比如proxyInterface,interceptorNames和target等;
+	 * 从属性名称可以看出,interceptorNames属性的值往往设置为需要定义的通知器,因为这些通知器在ProxyFactoryBean的aop配置下,
+	 * 是通过使用代理对象的拦截器机制起作用的;
+	 * 3. 定义target属性,作为target属性注入的bean,是需要用aop通知器中的切面应用来增强的对象,也就是base对象;
+	 */
 
 	/**
 	 * This suffix in a value in an interceptor list indicates to expand globals.
@@ -249,7 +264,9 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 	@Override
 	@Nullable
 	public Object getObject() throws BeansException {
+		// 初始化通知器链
 		initializeAdvisorChain();
+		// 这里对singleton和prototype的类型进行区分,生成对应的proxy
 		if (isSingleton()) {
 			return getSingletonInstance();
 		}
@@ -314,19 +331,27 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 	 * lazily creating it if it hasn't been created already.
 	 * @return the shared singleton proxy
 	 */
+	/**
+	 * TODO 生成singleton的代理对象;
+	 * 生成AopProxy代理对象的调用入口;
+	 * @return
+	 */
 	private synchronized Object getSingletonInstance() {
 		if (this.singletonInstance == null) {
 			this.targetSource = freshTargetSource();
 			if (this.autodetectInterfaces && getProxiedInterfaces().length == 0 && !isProxyTargetClass()) {
 				// Rely on AOP infrastructure to tell us what interfaces to proxy.
+				// 根据aop框架来判断需要代理的接口;
 				Class<?> targetClass = getTargetClass();
 				if (targetClass == null) {
 					throw new FactoryBeanNotInitializedException("Cannot determine target class for proxy");
 				}
+				// 这里设置代理对象的接口
 				setInterfaces(ClassUtils.getAllInterfacesForClass(targetClass, this.proxyClassLoader));
 			}
 			// Initialize the shared singleton instance.
 			super.setFrozen(this.freezeProxy);
+			// 注意这里的方法会使用ProxyFactoryBean来生成需要的Proxy;
 			this.singletonInstance = getProxy(createAopProxy());
 		}
 		return this.singletonInstance;
@@ -373,6 +398,11 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 	 * @param aopProxy the prepared AopProxy instance to get the proxy from
 	 * @return the proxy object to expose
 	 * @see AopProxy#getProxy(ClassLoader)
+	 */
+	/**
+	 * TODO 通过createAopProxy返回的AopProxy来得到代理对象
+	 * @param aopProxy
+	 * @return
 	 */
 	protected Object getProxy(AopProxy aopProxy) {
 		return aopProxy.getProxy(this.proxyClassLoader);
@@ -430,7 +460,13 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 	 * is added. Interceptors added programmatically through the factory API
 	 * are unaffected by such changes.
 	 */
+	/**
+	 * TODO 为代理对象配置Advisor链
+	 * @throws AopConfigException
+	 * @throws BeansException
+	 */
 	private synchronized void initializeAdvisorChain() throws AopConfigException, BeansException {
+		// advisorChainInitialized标识位,用来表示通知器链是否已经初始化;
 		if (this.advisorChainInitialized) {
 			return;
 		}
@@ -448,6 +484,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 			}
 
 			// Materialize interceptor chain from bean names.
+			// 这里是添加Advisor链的调用,是通过interceprorNames属性进行配置的;
 			for (String name : this.interceptorNames) {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Configuring advisor or advice '" + name + "'");
@@ -465,14 +502,21 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 				else {
 					// If we get here, we need to add a named interceptor.
 					// We must check if it's a singleton or prototype.
+					// 如果程序在这里被调用,那么需要加入命名的拦截器advice,
+					// 并且需要检查这个bean是singleton还是prototype类型;
 					Object advice;
+					// 如果是singleton
 					if (this.singleton || this.beanFactory.isSingleton(name)) {
 						// Add the real Advisor/Advice to the chain.
+						// 这里是取得advisor的地方,是通过beanFactory取得的,
+						// 把interceptorNames这个List中的interceptor名字交给beanFactory,
+						// 然后通过调用BeanFactory的getBean()去获取;
 						advice = this.beanFactory.getBean(name);
 					}
 					else {
 						// It's a prototype Advice or Advisor: replace with a prototype.
 						// Avoid unnecessary creation of prototype bean just for advisor chain initialization.
+						// 对prototype类型bean处理
 						advice = new PrototypePlaceholderAdvisor(name);
 					}
 					addAdvisorOnChainCreation(advice, name);

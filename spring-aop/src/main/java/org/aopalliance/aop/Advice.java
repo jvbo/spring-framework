@@ -25,7 +25,7 @@ package org.aopalliance.aop;
  */
 
 /**
- * TODO 通知,定义在连接点做什么,为切面增强提供织入接口;
+ * TODO 通知,定义在连接点做什么,为切面增强提供织入接口;切面增强设计;
  * 主要描述spring aop围绕方法调用而注入的切面行为;
  * 使用这个统一接口,并通过这个接口,为aop切面增强的织入功能做了更多的细化和扩展,'
  * 比如提供了更具体的通知类型,如BeforeAdvice,AfterAdvice,ThrowsAdvice等;

@@ -23,6 +23,10 @@ import java.io.Serializable;
  *
  * @author Rod Johnson
  */
+
+/**
+ * TODO 单例模式
+ */
 @SuppressWarnings("serial")
 class TruePointcut implements Pointcut, Serializable {
 
@@ -30,6 +34,9 @@ class TruePointcut implements Pointcut, Serializable {
 
 	/**
 	 * Enforce Singleton pattern.
+	 */
+	/**
+	 * TODO 无参私有构造函数,使其不能直接被实例化,并设置一个静态变量来保证该实例是唯一的;
 	 */
 	private TruePointcut() {
 	}

@@ -31,6 +31,10 @@ import org.springframework.util.Assert;
  *
  * @author Rod Johnson
  */
+
+/**
+ * TODO MethodBeforeAdvice拦截器 #MethodBeforeAdvice
+ */
 @SuppressWarnings("serial")
 public class MethodBeforeAdviceInterceptor implements MethodInterceptor, Serializable {
 
@@ -41,11 +45,21 @@ public class MethodBeforeAdviceInterceptor implements MethodInterceptor, Seriali
 	 * Create a new MethodBeforeAdviceInterceptor for the given advice.
 	 * @param advice the MethodBeforeAdvice to wrap
 	 */
+	/**
+	 * TODO 为指定advice创建对应的MethodBeforeAdviceInterceptor对象
+	 * @param advice
+	 */
 	public MethodBeforeAdviceInterceptor(MethodBeforeAdvice advice) {
 		Assert.notNull(advice, "Advice must not be null");
 		this.advice = advice;
 	}
 
+	/**
+	 * 这个invoke方法是拦截器的回调方法,会在代理对象的方法被调用时触发回调
+	 * @param mi
+	 * @return
+	 * @throws Throwable
+	 */
 	@Override
 	public Object invoke(MethodInvocation mi) throws Throwable {
 		this.advice.before(mi.getMethod(), mi.getArguments(), mi.getThis() );
