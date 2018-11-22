@@ -116,8 +116,28 @@ import org.springframework.util.StringUtils;
  * @see Autowired
  * @see Value
  */
+
+/**
+ * TODO 扫描Spring容器中所有Bea,
+ * 当发现bean中拥有@Autowired就找到和其匹配(默认按类型匹配)的bean,并注入到对应的地方中去
+ */
 public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
 		implements MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware {
+	/**
+	 * 1. 在默认情况下使用@Autowired进行自动注入时,
+	 * Spring容器中匹配的Bean数目必须有且仅有一个;当找不到一个匹配的Bean时,
+	 * Spring容器将抛出BeanCreationException异常,并指出必须至少拥有一个匹配的Bean;
+	 * 如果Spring容器中匹配了多个Bean,Spring容器在启动时也会抛出BeanCreationException异常;
+	 *
+	 * 2. @Autowired和@Qualifier结合使用时,自动注入的策略就从byType转变成byName了;
+	 *
+	 * 3. @Resource的作用相当于@Autowired,
+	 * 不过@Autowired按byType自动注入,@Resource默认按byName自动注入;
+	 * @Resource有两个属性,分别是name和type;
+	 * Spring将@Resource注释的name属性解析为Bean的名字;而type属性则解析为Bean的类型
+	 *
+	 *
+	 */
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
